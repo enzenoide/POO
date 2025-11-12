@@ -83,13 +83,14 @@ class UI:
                     elif p == 4: UI.Categoria_excluir()
 
                 elif op == 3:
-                    print("\n1 - Inserir | 2 - Listar | 3 - Atualizar | 4 - Excluir | 5 - Listar vendas")
+                    print("\n1 - Inserir | 2 - Listar | 3 - Atualizar | 4 - Excluir | 5 - Listar vendas 6 - Lucro")
                     p = int(input("Qual operação deseja realizar? "))
                     if p == 1: UI.Cliente_inserir()
                     elif p == 2: UI.Cliente_listar()
                     elif p == 3: UI.Cliente_atualizar()
                     elif p == 4: UI.Cliente_excluir()
-                    elif p == 5: UI.cliente_listar_vendas()  
+                    elif p == 5: UI.cliente_listar_vendas()
+                    elif p == 6: UI.lucro()
 
         
         elif cls.__usuario and cls.__usuario.get_email() != "admin":
@@ -171,7 +172,10 @@ class UI:
     def cliente_listar_vendas(cls):
         View.cliente_listar_vendas()  
 
-    
+    @classmethod
+    def lucro(cls):
+        View.lucro()
+
 
     @staticmethod
     def Produto_inserir():
@@ -267,7 +271,5 @@ class UI:
             print("Compra realizada com sucesso!")
         else:
             print("Compra cancelada.")
-
-
 
 UI.main()

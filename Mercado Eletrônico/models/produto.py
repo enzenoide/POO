@@ -109,7 +109,6 @@ class ProdutoDAO:
             novo_preco = obj.get_preco() + (obj.get_preco() * (percentual / 100))
             obj.set_preco(novo_preco)
             cls.atualizar(obj)
-
     @classmethod
     def buscar(cls, id):
         produtos = cls.listar()

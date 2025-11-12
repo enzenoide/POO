@@ -93,6 +93,8 @@ class View:
 
         if not encontrou:
             print("❌ Nenhuma venda registrada.")
+
+
     def categoria_inserir(id,desc):
         id = 0
         c = Categoria(id,desc)
@@ -189,3 +191,27 @@ class View:
 
         print("Compra realizada com sucesso!")
         print(f"Valor total: R${total:.2f}")
+
+
+
+    @classmethod
+    def lucro(cls):
+        produtos = ProdutoDAO.listar()
+        vendaitem = VendaitemDAO.listar()
+        vendas = VendaDAO.listar()
+
+
+        
+        total_estoque = sum(p.get_preco() * p.get_estoque() for p in produtos)
+        total_vendidos = 0
+        for v in vendas:
+            for i in vendaitem:
+                if i.get_idvenda() == v.get_id():
+                    total_vendidos += i.get_preco() * i.get_qtd()
+        print("=======RELATORIO DE LUCRO=======")
+        print(f"Quantidade total em estoque: R${total_estoque}")
+        print(f"Valor total vendido: R${total_vendidos}")
+        print(f"Lucro ( venda - estoque ): R$ {total_vendidos - total_estoque}")
+        return total_vendidos - total_estoque
+
+
