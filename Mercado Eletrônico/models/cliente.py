@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
-from .carrinho import Carrinho
+from .carrinho import Carrinho    
+from .produto import ProdutoDAO  
 class Cliente:
     def __init__(self, id, nome, email, fone, senha):
         self.set_id(id)
@@ -183,20 +184,44 @@ class VendaDAO:
                 for dic in list_dic:
                     carrinho_objs = [Carrinho(i["idproduto"], i["qtd"]) for i in dic.get("carrinho", [])]
                     c = Venda(dic["id"], dic["data"], carrinho_objs, dic["total"], dic["idcliente"])
+
+                   
+                    if "nome_cliente" in dic:
+                        c.nome_cliente = dic["nome_cliente"]
+
                     cls.objetos.append(c)
         except:
             pass
 
     @classmethod
     def salvar(cls):
-        with open("vendas.json", "w") as arquivo:
-            json.dump([{
+        dados = []
+
+        for v in cls.objetos:
+            
+            cliente = ClienteDAO.listar_id(v.get_idcliente())
+            nome_cliente = cliente.get_nome() if cliente else "Cliente não encontrado"
+
+            
+            itens_carrinho = []
+            for item in v.carrinho:
+                produto = ProdutoDAO.buscar(item.get_idproduto())
+                descricao_produto = produto.get_descricao() if produto else "Produto não encontrado"
+                itens_carrinho.append({
+                    "idproduto": item.get_idproduto(),
+                    "descricao_produto": descricao_produto,
+                    "qtd": item.get_qtd()
+                })
+
+            
+            dados.append({
                 "id": v.get_id(),
                 "data": v.get_data().isoformat(),
-                "carrinho": [{
-                    "idproduto": item.get_idproduto(),
-                    "qtd": item.get_qtd()
-                } for item in v.carrinho],
+                "carrinho": itens_carrinho,
                 "total": v.get_total(),
-                "idcliente": v.get_idcliente()
-            } for v in cls.objetos], arquivo, indent=4)
+                "idcliente": v.get_idcliente(),
+                "nome_cliente": nome_cliente
+            })
+
+        with open("vendas.json", "w") as arquivo:
+            json.dump(dados, arquivo, indent=4)

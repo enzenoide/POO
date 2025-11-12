@@ -1,3 +1,4 @@
+from .produto import ProdutoDAO  
 import json
 
 class VendaItem:
@@ -90,11 +91,23 @@ class VendaitemDAO:
 
     @classmethod
     def salvar(cls):
-        with open("vendaitens.json", "w") as arquivo:
-            json.dump([{
+        dados = []
+        for v in cls.objetos:
+           
+            produto = ProdutoDAO.buscar(v.get_idproduto())
+
+            
+            descricao = produto.get_descricao() if produto else "Produto não encontrado"
+
+           
+            dados.append({
                 "id": v.get_id(),
                 "qtd": v.get_qtd(),
                 "preco": v.get_preco(),
                 "idvenda": v.get_idvenda(),
-                "idproduto": v.get_idproduto()
-            } for v in cls.objetos], arquivo, indent=4)
+                "idproduto": v.get_idproduto(),
+                "descricao_produto": descricao
+            })
+
+        with open("vendaitens.json", "w") as arquivo:
+            json.dump(dados, arquivo, indent=4)

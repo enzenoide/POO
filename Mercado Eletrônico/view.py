@@ -5,6 +5,7 @@ from models.carrinho import Carrinho,CarrinhoDAO
 from models.cliente import Venda,VendaDAO
 from models.vendaItem import VendaItem,VendaitemDAO
 from datetime import datetime
+import json
 class View:
     def cliente_criar_admin():
         for obj in View.cliente_listar():
@@ -41,22 +42,57 @@ class View:
         c = Cliente(id,nome,email,fone,senha)
         ClienteDAO.excluir(c)
     def cliente_listar_compras(idcliente):
-        vendas = VendaDAO.listar()
-        itens = VendaitemDAO.listar()
+        try:
+            with open("vendas.json", "r") as arquivo:
+                vendas = json.load(arquivo)
+        except:
+            print("Nenhuma venda registrada ainda.")
+            return
 
         encontrou = False
 
         for v in vendas:
-            if v.get_idcliente() == idcliente:
+            
+            if int(v["idcliente"]) == int(idcliente):
                 encontrou = True
-                print(f"Venda ID: {v.get_id()} Total: R${v.get_total()}")
-            for i in itens:
-                if i.get_idvenda() == v.get_id:
-                    produto = ProdutoDAO.listar_id(i.get_idproduto())
-                    print(f"{produto.get_descricao()} Quantidade: {i.get_qtd()} Preço: {i.get_preco()}")
-        if not encontrou:
-            print("Você não possui nenhuma compra")
+                print(f"\n🧾 Venda ID: {v['id']} | Total: R${v['total']:.2f} | Data: {v['data']}")
+                print("Itens:")
 
+                
+                for item in v["carrinho"]:
+                    nome_produto = item.get("descricao_produto", "Produto não encontrado")
+                    qtd = item.get("qtd", 0)
+                    
+                    print(f"  - {nome_produto} | Quantidade: {qtd}")
+
+        if not encontrou:
+            print("❌ Você não possui nenhuma compra.")
+    def cliente_listar_vendas():
+        vendas = VendaDAO.listar()
+        itens = VendaitemDAO.listar()
+        encontrou = False
+
+        for v in vendas:
+            cliente = ClienteDAO.listar_id(v.get_idcliente())
+            nome_cliente = cliente.get_nome() if cliente else "Cliente não encontrado"
+
+            print(f"\n🧾 Venda ID: {v.get_id()} | Cliente: {nome_cliente} | Total: R${v.get_total():.2f} | Data: {v.get_data()}")
+
+            encontrou_itens = False
+            for i in itens:
+                if i.get_idvenda() == v.get_id():
+                    produto = ProdutoDAO.listar_id(i.get_idproduto())
+                    nome_produto = produto.get_descricao() if produto else "Produto não encontrado"
+                    print(f"  - Produto: {nome_produto} | Quantidade: {i.get_qtd()} | Preço unitário: R${i.get_preco():.2f}")
+                    encontrou_itens = True
+
+            if not encontrou_itens:
+                print("  (Nenhum item encontrado para esta venda)")
+
+            encontrou = True
+
+        if not encontrou:
+            print("❌ Nenhuma venda registrada.")
     def categoria_inserir(id,desc):
         id = 0
         c = Categoria(id,desc)
