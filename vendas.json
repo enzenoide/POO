@@ -54,5 +54,19 @@
         "total": 12.0,
         "idcliente": 2,
         "nome_cliente": "Henze"
+    },
+    {
+        "id": 5,
+        "data": "2025-11-13T19:07:00.760973",
+        "carrinho": [
+            {
+                "idproduto": 1,
+                "descricao_produto": "Leite",
+                "qtd": 2
+            }
+        ],
+        "total": 24.0,
+        "idcliente": 2,
+        "nome_cliente": "Henze"
     }
 ]

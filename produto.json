@@ -2,36 +2,43 @@
     {
         "id": 4,
         "descricao": "desinfetante",
-        "preco": 15.0,
+        "preco": 16.5,
         "estoque": 133,
         "idcategoria": 4
     },
     {
         "id": 5,
         "descricao": "chocolate",
-        "preco": 6.0,
+        "preco": 6.6,
         "estoque": 122,
         "idcategoria": 5
     },
     {
         "id": 3,
         "descricao": "Cereal sucrilhos",
-        "preco": 10.0,
+        "preco": 11.0,
         "estoque": 15,
         "idcategoria": 3
     },
     {
         "id": 2,
         "descricao": "Escova de dente",
-        "preco": 5.0,
+        "preco": 5.5,
         "estoque": 6,
+        "idcategoria": 2
+    },
+    {
+        "id": 6,
+        "descricao": "Fio dental",
+        "preco": 4.4,
+        "estoque": 12,
         "idcategoria": 2
     },
     {
         "id": 1,
         "descricao": "Leite",
-        "preco": 12.0,
-        "estoque": 3,
+        "preco": 13.2,
+        "estoque": 23,
         "idcategoria": 1
     }
 ]
