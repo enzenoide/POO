@@ -238,16 +238,17 @@ class UI:
 
     
 
-    @staticmethod
-    def Carrinho_inserir():
+    @classmethod
+    def Carrinho_inserir(cls):
         UI.Produto_listar()
-        id = int(input("ID do produto que deseja adicionar: "))
+        idproduto = int(input("ID do produto que deseja adicionar: "))
         qtd = int(input("Quantidade: "))
-        View.carrinho_inserir(id, qtd)
+        View.carrinho_inserir(cls.__usuario.get_id(), idproduto, qtd)
 
-    @staticmethod
-    def carrinho_listar():
-        for obj in View.carrinho_listar_detalhado():
+    @classmethod
+    def carrinho_listar(cls):
+        lista = View.carrinho_listar_detalhado(cls.__usuario.get_id())
+        for obj in lista:
             print(obj)
 
     @staticmethod
@@ -256,18 +257,23 @@ class UI:
 
     @classmethod
     def carrinho_comprar(cls):
-        carrinho = View.carrinho_listar_detalhado()
+        idcliente = cls.__usuario.get_id()
+
+        carrinho = View.carrinho_listar_detalhado(idcliente)
         if not carrinho:
             print("Carrinho vazio.")
             return
+
         print("Itens no carrinho:")
         for item in carrinho:
             print(item)
-        total = View.carrinho_preco()
+
+        total = View.carrinho_preco(idcliente)
         print(f"Total: R${total:.2f}")
+
         confirmacao = input("Deseja finalizar a compra? (S/N): ").upper()
         if confirmacao == "S":
-            View.carrinho_comprar(cls.__usuario.get_id())
+            View.carrinho_comprar(idcliente)
             print("Compra realizada com sucesso!")
         else:
             print("Compra cancelada.")

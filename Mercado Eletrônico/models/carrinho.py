@@ -8,11 +8,13 @@ class Carrinho:
 
     def get_idproduto(self):
         return self.__idproduto
+    
     def get_qtd(self):
         return self.__qtd
 
     def set_idproduto(self, idproduto):
         self.__idproduto = idproduto
+
     def set_qtd(self, qtd):
         if qtd == "":
             raise ValueError("Digite alguma quantidade")
@@ -26,68 +28,74 @@ class CarrinhoDAO:
     objetos = []  
 
     @classmethod
-    def inserir(cls, obj):
-        cls.abrir()
-        # Se o produto já estiver no carrinho, apenas atualiza a quantidade
-        existente = cls.listar_id(obj.get_idproduto())
-        if existente:
-            existente.set_qtd(existente.get_qtd() + obj.get_qtd())
-        else:
-            cls.objetos.append(obj)
-        cls.salvar()
-
-    @classmethod
-    def listar(cls):
-        cls.abrir()
-        return cls.objetos
-
-    @classmethod
-    def listar_id(cls, id):
-        cls.abrir()
-        for obj in cls.objetos:
-            if obj.get_idproduto() == id:
-                return obj
-        return None    
-
-    @classmethod
-    def atualizar(cls, obj):
-        aux = cls.listar_id(obj.get_idproduto())
-        if aux is not None:
-            cls.objetos.remove(aux)
-            cls.objetos.append(obj)
-            cls.salvar()
-
-    @classmethod
-    def excluir(cls, obj):
-        aux = cls.listar_id(obj.get_idproduto())
-        if aux is not None:
-            cls.objetos.remove(aux)
-            cls.salvar()
-
-    @classmethod
-    def abrir(cls):
+    def abrir(cls, idcliente):
+        filename = f"carrinho_{idcliente}.json"
         cls.objetos = []
         try:
-            with open("carrinho.json", "r") as arquivo:
+            with open(filename, "r") as arquivo:
                 list_dic = json.load(arquivo)
                 for dic in list_dic:
-                    c = Carrinho(dic["idproduto"], dic["qtd"])
-                    cls.objetos.append(c)
+                    cls.objetos.append(Carrinho(dic["idproduto"], dic["qtd"]))
         except:
             pass
 
     @classmethod
-    def salvar(cls):
-        with open("carrinho.json", "w") as arquivo:
+    def salvar(cls, idcliente):
+        filename = f"carrinho_{idcliente}.json"
+        with open(filename, "w") as arquivo:
             json.dump([{
                 "idproduto": c.get_idproduto(),
                 "qtd": c.get_qtd()
             } for c in cls.objetos], arquivo, indent=4)
 
     @classmethod
-    def listar_detalhado(cls):
-        cls.abrir()
+    def inserir(cls, idcliente, obj):
+        cls.abrir(idcliente)
+
+        existente = cls.listar_id(idcliente, obj.get_idproduto())
+        if existente:
+            existente.set_qtd(existente.get_qtd() + obj.get_qtd())
+        else:
+            cls.objetos.append(obj)
+
+        cls.salvar(idcliente)
+
+    @classmethod
+    def listar(cls, idcliente):
+        cls.abrir(idcliente)
+        return cls.objetos
+
+    @classmethod
+    def listar_id(cls, idcliente, idproduto):
+        cls.abrir(idcliente)
+        for obj in cls.objetos:
+            if obj.get_idproduto() == idproduto:
+                return obj
+        return None    
+
+    @classmethod
+    def atualizar(cls, idcliente, obj):
+        cls.abrir(idcliente)
+
+        aux = cls.listar_id(idcliente, obj.get_idproduto())
+        if aux is not None:
+            cls.objetos.remove(aux)
+            cls.objetos.append(obj)
+            cls.salvar(idcliente)
+
+    @classmethod
+    def excluir(cls, idcliente, idproduto):
+        cls.abrir(idcliente)
+        aux = cls.listar_id(idcliente, idproduto)
+        if aux is not None:
+            cls.objetos.remove(aux)
+            cls.salvar(idcliente)
+
+    @classmethod
+    def listar_detalhado(cls, idcliente):
+        cls.abrir(idcliente)
         lista_final = []
+
         for item in cls.objetos:
             produto = ProdutoDAO.listar_id(item.get_idproduto())
             if produto:
@@ -99,8 +107,3 @@ class CarrinhoDAO:
                     "total": float(produto.get_preco()) * float(item.get_qtd())
                 })
         return lista_final
-
-    @classmethod
-    def limpar(cls):
-        cls.objetos = []
-        cls.salvar()
