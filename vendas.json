@@ -1,7 +1,7 @@
 [
     {
         "id": 1,
-        "data": "2025-11-12T13:10:07.962550",
+        "data": "2025-11-17T01:39:30.319987",
         "carrinho": [
             {
                 "idproduto": 1,
@@ -9,64 +9,8 @@
                 "qtd": 1
             }
         ],
-        "total": 12.0,
+        "total": 13.2,
         "idcliente": 2,
-        "nome_cliente": "Henze"
-    },
-    {
-        "id": 2,
-        "data": "2025-11-12T13:14:00.503447",
-        "carrinho": [
-            {
-                "idproduto": 2,
-                "descricao_produto": "Escova de dente",
-                "qtd": 2
-            }
-        ],
-        "total": 10.0,
-        "idcliente": 2,
-        "nome_cliente": "Henze"
-    },
-    {
-        "id": 3,
-        "data": "2025-11-12T13:23:39.047391",
-        "carrinho": [
-            {
-                "idproduto": 1,
-                "descricao_produto": "Leite",
-                "qtd": 1
-            }
-        ],
-        "total": 12.0,
-        "idcliente": 2,
-        "nome_cliente": "Henze"
-    },
-    {
-        "id": 4,
-        "data": "2025-11-12T13:26:32.532994",
-        "carrinho": [
-            {
-                "idproduto": 1,
-                "descricao_produto": "Leite",
-                "qtd": 1
-            }
-        ],
-        "total": 12.0,
-        "idcliente": 2,
-        "nome_cliente": "Henze"
-    },
-    {
-        "id": 5,
-        "data": "2025-11-13T19:07:00.760973",
-        "carrinho": [
-            {
-                "idproduto": 1,
-                "descricao_produto": "Leite",
-                "qtd": 2
-            }
-        ],
-        "total": 24.0,
-        "idcliente": 2,
-        "nome_cliente": "Henze"
+        "nome_cliente": "1"
     }
 ]

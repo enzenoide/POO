@@ -74,12 +74,14 @@ class ClienteDAO:
             cls.salvar()
 
     @classmethod
-    def excluir(cls, obj):
-        aux = cls.listar_id(obj.get_id())
+    def excluir(cls, id):
+        aux = cls.listar_id(id)
         if aux is not None:
+            if aux.get_email() == "admin":
+                print("❌ Não é permitido excluir o administrador!")
+                return
             cls.objetos.remove(aux)
             cls.salvar()
-
     @classmethod
     def abrir(cls):
         cls.objetos = []
@@ -202,18 +204,18 @@ class VendaDAO:
             cliente = ClienteDAO.listar_id(v.get_idcliente())
             nome_cliente = cliente.get_nome() if cliente else "Cliente não encontrado"
 
-            
             itens_carrinho = []
             for item in v.carrinho:
-                produto = ProdutoDAO.buscar(item.get_idproduto())
+               
+                produto = ProdutoDAO.listar_id(item.get_idproduto())
                 descricao_produto = produto.get_descricao() if produto else "Produto não encontrado"
+
                 itens_carrinho.append({
                     "idproduto": item.get_idproduto(),
                     "descricao_produto": descricao_produto,
                     "qtd": item.get_qtd()
                 })
 
-            
             dados.append({
                 "id": v.get_id(),
                 "data": v.get_data().isoformat(),

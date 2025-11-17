@@ -2,40 +2,8 @@
     {
         "id": 1,
         "qtd": 1,
-        "preco": 12.0,
+        "preco": 13.2,
         "idvenda": 1,
-        "idproduto": 1,
-        "descricao_produto": "Leite"
-    },
-    {
-        "id": 2,
-        "qtd": 2,
-        "preco": 5.0,
-        "idvenda": 2,
-        "idproduto": 2,
-        "descricao_produto": "Escova de dente"
-    },
-    {
-        "id": 3,
-        "qtd": 1,
-        "preco": 12.0,
-        "idvenda": 3,
-        "idproduto": 1,
-        "descricao_produto": "Leite"
-    },
-    {
-        "id": 4,
-        "qtd": 1,
-        "preco": 12.0,
-        "idvenda": 4,
-        "idproduto": 1,
-        "descricao_produto": "Leite"
-    },
-    {
-        "id": 5,
-        "qtd": 2,
-        "preco": 12.0,
-        "idvenda": 5,
         "idproduto": 1,
         "descricao_produto": "Leite"
     }

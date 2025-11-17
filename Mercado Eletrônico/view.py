@@ -25,7 +25,6 @@ class View:
                 print("Já existe alguém com esse email")
                 return
         View.cliente_inserir(nome,email,fone,senha)
-        print("Conta criada com sucesso!")
 
     def cliente_inserir(nome,email,fone,senha):
         id = 0
@@ -43,12 +42,8 @@ class View:
         ClienteDAO.atualizar(c)
 
     def cliente_excluir(id):
-        nome = ""
-        email = ""
-        fone = ""
-        senha = ""
-        c = Cliente(id,nome,email,fone,senha)
-        ClienteDAO.excluir(c)
+        input
+        ClienteDAO.excluir(id)
 
     def cliente_listar_compras(idcliente):
         try:
@@ -164,48 +159,91 @@ class View:
             total_geral += item["total"]
         return total_geral
 
+    @staticmethod
     def carrinho_comprar(idcliente):
-        carrinho = CarrinhoDAO.listar(idcliente)
+        from models.carrinho import CarrinhoDAO
+        from models.cliente import Venda, VendaDAO
+        from datetime import datetime
+        from models.produto import ProdutoDAO
+
         
-        if not carrinho:
-            print("Carrinho vazio.")
-            return
+        carrinho = CarrinhoDAO.listar(idcliente)
 
-        total = View.carrinho_preco(idcliente)
+        if not carrinho:  
+            print("Carrinho vazio! Nada para comprar.")
+            return False
 
-        venda = Venda(0, datetime.now(), carrinho, total, idcliente)
-        VendaDAO.inserir(venda)
+        total = 0
 
-        idvenda = VendaDAO.listar()[-1].get_id()
-
+        
         for item in carrinho:
             produto = ProdutoDAO.listar_id(item.get_idproduto())
-            vi = VendaItem(0, item.get_qtd(), produto.get_preco(), idvenda, produto.get_id())
-            VendaitemDAO.inserir(vi)
+            if produto is None:
+                print(f"Produto ID {item.get_idproduto()} não encontrado. Operação cancelada.")
+                return False
 
+            if produto.get_estoque() < item.get_qtd():
+                print(f"Estoque insuficiente para o produto '{produto.get_descricao()}'.")
+                return False
+
+            total += float(produto.get_preco()) * float(item.get_qtd())
+
+        
+        for item in carrinho:
+            produto = ProdutoDAO.listar_id(item.get_idproduto())
             produto.set_estoque(produto.get_estoque() - item.get_qtd())
             ProdutoDAO.atualizar(produto)
 
+        
+        venda = Venda(0, datetime.now(), carrinho.copy(), total, idcliente)
+        VendaDAO.inserir(venda)
+
+        for item in venda.carrinho:
+            vendaitem = VendaItem(
+                id=None,
+                qtd=item.get_qtd(),
+                preco=ProdutoDAO.listar_id(item.get_idproduto()).get_preco(),
+                idvenda=venda.get_id(),
+                idproduto=item.get_idproduto()
+            )
+            VendaitemDAO.inserir(vendaitem)
+
+        
         CarrinhoDAO.limpar(idcliente)
 
-        print("Compra realizada com sucesso!")
-        print(f"Valor total: R${total:.2f}")
-
+        return True
     @classmethod
     def lucro(cls):
         produtos = ProdutoDAO.listar()
-        vendaitem = VendaitemDAO.listar()
         vendas = VendaDAO.listar()
 
-        total_estoque = sum(p.get_preco() * p.get_estoque() for p in produtos)
-        total_vendidos = 0
-        for v in vendas:
-            for i in vendaitem:
-                if i.get_idvenda() == v.get_id():
-                    total_vendidos += i.get_preco() * i.get_qtd()
+        total_vendido = 0
+        qtd_vendida = 0
 
-        print("=======RELATORIO DE LUCRO=======")
-        print(f"Quantidade total em estoque: R${total_estoque}")
-        print(f"Valor total vendido: R${total_vendidos}")
-        print(f"Lucro ( venda - estoque ): R$ {total_vendidos - total_estoque}")
-        return total_vendidos - total_estoque
+       
+        for venda in vendas:
+            for item in venda.carrinho:
+                produto = ProdutoDAO.listar_id(item.get_idproduto())
+                if produto:
+                    total_vendido += float(produto.get_preco()) * float(item.get_qtd())
+                    qtd_vendida += item.get_qtd()
+
+    
+        total_estoque = sum(float(p.get_preco()) * float(p.get_estoque()) for p in produtos)
+
+        lucro = total_vendido - total_estoque
+
+        print("\n📊 ======= RELATÓRIO FINANCEIRO =======")
+        print(f"💼 Valor total do estoque atual : R${total_estoque:.2f}")
+        print(f"🛒 Quantidade total vendida     : {qtd_vendida}")
+        print(f"💰 Total arrecadado com vendas  : R${total_vendido:.2f}")
+        print("--------------------------------------")
+
+        if lucro >= 0:
+            print(f"🟢 Situação: LUCRO de R${lucro:.2f}")
+        else:
+            print(f"🔴 Situação: PREJUÍZO de R${lucro:.2f}")
+
+        print("=======================================\n")
+
+        return lucro

@@ -107,3 +107,8 @@ class CarrinhoDAO:
                     "total": float(produto.get_preco()) * float(item.get_qtd())
                 })
         return lista_final
+    @classmethod
+    def limpar(cls, idcliente):
+        cls.abrir(idcliente)  
+        cls.objetos = []      
+        cls.salvar(idcliente)

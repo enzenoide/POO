@@ -83,7 +83,7 @@ class UI:
                     elif p == 4: UI.Categoria_excluir()
 
                 elif op == 3:
-                    print("\n1 - Inserir | 2 - Listar | 3 - Atualizar | 4 - Excluir | 5 - Listar vendas 6 - Lucro")
+                    print("\n1 - Inserir | 2 - Listar | 3 - Atualizar | 4 - Excluir | 5 - Listar vendas | 6 - Lucro")
                     p = int(input("Qual operação deseja realizar? "))
                     if p == 1: UI.Cliente_inserir()
                     elif p == 2: UI.Cliente_listar()
@@ -92,10 +92,15 @@ class UI:
                     elif p == 5: UI.cliente_listar_vendas()
                     elif p == 6: UI.lucro()
 
+                elif op == 4:  # Sai do modo admin e volta para o menu visitante
+                    print("Você saiu da conta de administrador!\n")
+                    cls.__usuario = None
+                    UI.main()
+                    return
+
         
         elif cls.__usuario and cls.__usuario.get_email() != "admin":
-            op = 0
-            while op != 6:
+            while True:
                 op = UI.menu_cliente()
                 if op == 1:
                     UI.Produto_listar()
@@ -106,12 +111,20 @@ class UI:
                 elif op == 4:
                     confirmacao = input("Deseja finalizar a compra? (S/N): ").upper()
                     if confirmacao == "S":
-                        View.carrinho_comprar(cls.__usuario.get_id())
-                        print("Compra finalizada!")
+                        sucesso = View.carrinho_comprar(cls.__usuario.get_id())
+                        if sucesso:
+                            print("Compra finalizada!")
+                        else:
+                            print("Compra não realizada! Verifique o estoque ou carrinho.")
                     else:
                         print("Compra cancelada.")
                 elif op == 5:
                     UI.cliente_listar_compra()
+                elif op == 6:
+                    print("Você saiu da conta!")
+                    cls.__usuario = None
+                    UI.main()  
+                    return
 
     
 
@@ -160,9 +173,8 @@ class UI:
 
     @staticmethod
     def Cliente_excluir():
-        UI.Cliente_listar()
-        id = int(input("Informe o ID a ser excluído: "))
-        View.cliente_excluir(id, "", "", "")
+        id = int(input("Me informe o ID do cliente que deseja excluir: "))
+        View.cliente_excluir(id)
 
     @classmethod
     def cliente_listar_compra(cls):
@@ -248,8 +260,18 @@ class UI:
     @classmethod
     def carrinho_listar(cls):
         lista = View.carrinho_listar_detalhado(cls.__usuario.get_id())
-        for obj in lista:
-            print(obj)
+        print("\n🛒 Itens no seu carrinho:\n")
+        for item in lista:
+            print(
+                f"ID: {item['id_produto']} | "
+                f"{item['descricao']} | "
+                f"Preço: R${item['preco']:.2f} | "
+                f"Quantidade: {item['quantidade']} | "
+                f"Total: R${item['total']:.2f}"
+            )
+
+        total = sum(item['total'] for item in lista)
+        print(f"\n📌 Total do carrinho: R${total:.2f}\n")
 
     @staticmethod
     def carrinho_preco():
