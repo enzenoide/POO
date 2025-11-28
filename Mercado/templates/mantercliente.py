@@ -50,6 +50,15 @@ class ManterClienteUI:
                 time.sleep(2)
                 st.rerun()
     def excluir():
-        st.write("Excluir")
+        clientes = View.cliente_listar()
+        if len(clientes) == 0: st.write("Nenhum cliente cadastrado")
+        else:
+            op = st.selectbox("Exclusão de Clientes", clientes)
+            if st.button("Excluir"):
+                id = op.get_id()
+                View.cliente_excluir(id)
+                st.success("Cliente excluído com sucesso")
+                time.sleep(2)
+                st.rerun()
         
         
