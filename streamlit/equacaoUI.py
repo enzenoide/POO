@@ -1,6 +1,4 @@
 import streamlit as st
-import numpy as np
-import matplotlib.pyplot as plt
 from equacao import Equacao
 
 class EquacaoUI:
@@ -14,10 +12,3 @@ class EquacaoUI:
         if st.button("Calcular"):
             e = Equacao(a, b, c)
             st.write(e)
-
-            x = np.linspace(-20, 20, 400)
-            y = a * x**2 + b * x + c
-
-            fig, ax = plt.subplots()
-            ax.plot(x, y)
-            st.pyplot(fig)

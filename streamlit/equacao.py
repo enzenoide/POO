@@ -16,6 +16,8 @@ class Equacao:
         return self.__c
     
     def setA(self, a):
+        if a == 0:
+            raise ValueError("O A não pode ser igual a 0")
         self.__a = float(a)
 
     def setB(self, b):
@@ -25,27 +27,29 @@ class Equacao:
         self.__c = float(c)
     
     def Delta(self):
-        return self.__b**2 - 4 * self.__a * self.__c
+        return self.getB()**2 - 4 * self.getA() * self.getC()
 
-    # Valor de y
     def Y(self, x):
-        return self.__a * x**2 + self.__b * x + self.__c
+        return self.getA() * x**2 + self.getB() * x + self.getC()
 
-    # Raiz 1
     def X1(self):
-        d = self.Delta()
-        if d < 0:
-            return None
-        return (-self.__b + math.sqrt(d)) / (2 * self.__a)
+        d = selfDelta = self.Delta()
+        a = self.getA()
+        b = self.getB()
 
-    # Raiz 2
+        if d < 0:
+            return f"{-b / (2*a)} + {math.sqrt(-d) / (2*a)}"
+        return (-b + math.sqrt(d)) / (2 * a)
+
     def X2(self):
         d = self.Delta()
+        a = self.getA()
+        b = self.getB()
+
         if d < 0:
             return None
-        return (-self.__b - math.sqrt(d)) / (2 * self.__a)
+        return (-b - math.sqrt(d)) / (2 * a)
 
-    # Representação da equação
     def __str__(self):
         d = self.Delta()
         x1 = self.X1()

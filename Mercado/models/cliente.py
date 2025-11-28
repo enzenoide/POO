@@ -37,7 +37,13 @@ class Cliente:
 
     def __str__(self):
         return f"Cliente ID: {self.get_id()} | Nome: {self.get_nome()} | Email: {self.get_email()} | Fone: {self.get_fone()}"
+    
+    def to_json(self):
+        return { "id" : self.get_id(), "nome" : self.get_nome(), "email" : self.get_email(), "fone" : self.get_fone(), "senha" : self.get_senha() }
 
+    @staticmethod
+    def from_json(dic):
+        return Cliente(dic["id"], dic["nome"], dic["email"], dic["fone"], dic["senha"])
 class ClienteDAO:
     objetos = []
 
