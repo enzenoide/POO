@@ -20,6 +20,15 @@ class Categoria:
     def __str__(self):
         return f"Categoria ID: {self.get_id()} | Descrição: {self.get_descricao()}"
 
+    def to_json(self):
+        return { "id" : self.get_id(), "descricao" : self.get_descricao() }
+
+    @staticmethod
+    def from_json(dic):
+        return Categoria(dic["id"], dic["descricao"])
+    
+    
+
 class CategoriaDAO:
     objetos = []  # atributo da classe
 

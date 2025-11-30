@@ -22,11 +22,10 @@ class Produto:
     def set_id(self, id):
         self.__id = id
     def set_descricao(self, descricao):
-        if descricao == "": raise ValueError("Tem que possuir descrição")
         self.__descricao = descricao
     def set_preco(self, preco):
         preco = float(preco)
-        if preco <= 0: raise ValueError("O produto precisa possuir preço")
+        if preco < 0: raise ValueError("O produto precisa possuir preço")
         self.__preco = preco
     def set_estoque(self, estoque):
         estoque = int(estoque)
@@ -37,6 +36,13 @@ class Produto:
 
     def __str__(self):
         return f"Produto ID: {self.get_id()} | Descrição: {self.get_descricao()} | Preço: R${self.get_preco():.2f} | Estoque: {self.get_estoque()} | Categoria ID: {self.get_idcategoria()}"
+    
+    def to_json(self):
+        return { "id" : self.get_id(), "descricao" : self.get_descricao(), "preco" : self.get_preco(), "estoque" : self.get_estoque(), "idcategoria" : self.get_idcategoria() }
+
+    @staticmethod
+    def from_json(dic):
+        return Produto(dic["id"], dic["descricao"], dic["preco"], dic["estoque"], dic["idcategoria"])
 
 class ProdutoDAO:
     objetos = [] 

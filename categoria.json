@@ -8,15 +8,15 @@
         "descricao": "higiene"
     },
     {
-        "id": 3,
-        "descricao": "cereais"
+        "id": 5,
+        "descricao": "Doces"
     },
     {
         "id": 4,
         "descricao": "Limpeza"
     },
     {
-        "id": 5,
-        "descricao": "Doces"
+        "id": 3,
+        "descricao": "Cereais"
     }
 ]
