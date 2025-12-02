@@ -8,6 +8,7 @@ from templates.abrirconta import AbrirContaUI
 from view import View
 from templates.listarprodutos import ListarProdutosUI
 from templates.carrinho import CarrinhoUI
+from templates.listarcompras import ListarComprasUI
 class IndexUI:
     def menu_visitante():
         op = st.sidebar.selectbox("Menu", [
@@ -39,7 +40,7 @@ class IndexUI:
         if op == "Inserir produto no carrinho": CarrinhoUI.inserir()
         if op == "Visualizar carrinho": CarrinhoUI.listar()
         if op == "Comprar carrinho": CarrinhoUI.comprar()
-        if op == "Listar minhas compras": pass
+        if op == "Listar minhas compras": ListarComprasUI.main()
     def sidebar():
         if "cliente_id" not in st.session_state:
             IndexUI.menu_visitante()

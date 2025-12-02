@@ -51,13 +51,15 @@ class View:
                 vendas = json.load(arquivo)
         except:
             print("Nenhuma venda registrada ainda.")
-            return
+            return []
 
-        encontrou = False
+        compras = []
 
         for v in vendas:
             if int(v["idcliente"]) == int(idcliente):
-                encontrou = True
+                
+                compras.append(v)
+
                 print(f"\n🧾 Venda ID: {v['id']} | Total: R${v['total']:.2f} | Data: {v['data']}")
                 print("Itens:")
 
@@ -66,9 +68,9 @@ class View:
                     qtd = item.get("qtd", 0)
                     print(f"  - {nome_produto} | Quantidade: {qtd}")
 
-        if not encontrou:
+        if not compras:
             print("❌ Você não possui nenhuma compra.")
-
+        return compras
     def cliente_listar_vendas():
         vendas = VendaDAO.listar()
         itens = VendaitemDAO.listar()

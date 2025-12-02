@@ -139,7 +139,13 @@ class Venda:
 
     def __str__(self):
         return f"Venda ID: {self.get_id()}, Data: {self.get_data()}, Total: R${self.get_total():.2f}, Cliente: {self.get_idcliente()}"
+    
+    def to_json(self):
+        return { "id" : self.get_id(), "data" : self.get_data(), "carrinho" : self.carrinho, "total" : self.get_total(), "idcliente" : self.get_idcliente() }
 
+    @staticmethod
+    def from_json(dic):
+        return Venda(dic["id"], dic["data"], dic["carrinho"], dic["total"], dic["idcliente"])
 
 class VendaDAO:
     objetos = []
