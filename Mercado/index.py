@@ -4,7 +4,10 @@ from templates.mantercategoria import ManterCategoriaUI
 from templates.manterproduto import ManterProdutoUI
 from templates.reajustarproduto import ReajustarProdutoUI
 from templates.login import LoginUI
+from templates.abrirconta import AbrirContaUI
 from view import View
+from templates.listarprodutos import ListarProdutosUI
+from templates.carrinho import CarrinhoUI
 class IndexUI:
     def menu_visitante():
         op = st.sidebar.selectbox("Menu", [
@@ -12,7 +15,7 @@ class IndexUI:
                                     "Abrir conta", "Sair do Sistema"
                                     ])
         if op == "Entrar no Sistema": LoginUI.main()
-        if op == "Abrir conta": pass
+        if op == "Abrir conta": AbrirContaUI.main()
         if op == "Sair do Sistema": pass
     def menu_admin():
         op = st.sidebar.selectbox("Menu", [
@@ -32,10 +35,10 @@ class IndexUI:
                                    "Visualizar carrinho",
                                    "Comprar carrinho",
                                    "Listar minhas compras"])
-        if op == "Listar produtos": pass
-        if op == "Inserir produto no carrinho": pass
-        if op == "Visualizar carrinho": pass
-        if op == "Comprar carrinho": pass
+        if op == "Listar produtos": ListarProdutosUI.main()
+        if op == "Inserir produto no carrinho": CarrinhoUI.inserir()
+        if op == "Visualizar carrinho": CarrinhoUI.listar()
+        if op == "Comprar carrinho": CarrinhoUI.comprar()
         if op == "Listar minhas compras": pass
     def sidebar():
         if "cliente_id" not in st.session_state:

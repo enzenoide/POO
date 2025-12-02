@@ -6,5 +6,13 @@
         "idvenda": 1,
         "idproduto": 1,
         "descricao_produto": "Leite"
+    },
+    {
+        "id": 2,
+        "qtd": 2,
+        "preco": 15.84,
+        "idvenda": 2,
+        "idproduto": "1",
+        "descricao_produto": "Produto n\u00e3o encontrado"
     }
 ]

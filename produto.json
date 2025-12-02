@@ -21,13 +21,6 @@
         "idcategoria": 4
     },
     {
-        "id": 1,
-        "descricao": "Leite",
-        "preco": 15.84,
-        "estoque": 16,
-        "idcategoria": 1
-    },
-    {
         "id": 7,
         "descricao": "Bala fini",
         "preco": 10.8,
@@ -40,5 +33,12 @@
         "preco": 8.4,
         "estoque": 122,
         "idcategoria": 5
+    },
+    {
+        "id": 1,
+        "descricao": "Leite",
+        "preco": 15.84,
+        "estoque": 14,
+        "idcategoria": 1
     }
 ]

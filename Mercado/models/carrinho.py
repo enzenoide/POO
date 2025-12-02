@@ -18,10 +18,17 @@ class Carrinho:
     def set_qtd(self, qtd):
         if qtd == "":
             raise ValueError("Digite alguma quantidade")
-        self.__qtd = qtd
+        self.__qtd = int(qtd)
 
     def __str__(self):
         return f"ID: {self.get_idproduto()} Quantidade: {self.get_qtd()}"
+    
+    def to_json(self):
+        return { "idproduto" : self.get_idproduto(),"qtd": self.get_qtd()}
+
+    @staticmethod
+    def from_json(dic):
+        return Carrinho(dic["idproduto"], dic["qtd"])
 
 
 class CarrinhoDAO:
