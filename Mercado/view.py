@@ -27,6 +27,9 @@ class View:
         View.cliente_inserir(nome,email,fone,senha)
 
     def cliente_inserir(nome,email,fone,senha):
+        for obj in View.cliente_listar():
+            if obj.get_email() == email:
+                raise ValueError("Já existe um usuário com este email")
         id = 0
         c = Cliente(id,nome,email,fone,senha)
         ClienteDAO.inserir(c)

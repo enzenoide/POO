@@ -30,6 +30,7 @@ class Cliente:
         if email == "": raise ValueError("Email não pode ser vazio")
         self.email = email
     def set_fone(self, fone):
+        if fone == "": raise ValueError("O Telefone não pode ser vazio")
         self.fone = fone
     def set_senha(self, senha):
         if senha == "": raise ValueError("Senha não pode ser vazia")

@@ -19,5 +19,12 @@
         "email": "h@gmail.com",
         "fone": "(84) 991012814",
         "senha": "1234"
+    },
+    {
+        "id": 4,
+        "nome": "a",
+        "email": "a",
+        "fone": "a",
+        "senha": "a"
     }
 ]
