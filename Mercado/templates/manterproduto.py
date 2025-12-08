@@ -30,6 +30,10 @@ class ManterProdutoUI:
                 st.success("Produto inserido com sucesso!")
                 time.sleep(2)
                 st.rerun()
+            except ValueError:
+                st.error("O preço,estoque e ID precisam ser números válidos e positivos")
+            except KeyError as erro:
+                st.error(f"falta o campo {erro} na entrada de dados")
             except Exception as erro:
                 st.error(erro)
     def atualizar():

@@ -43,9 +43,16 @@
     },
     {
         "id": 8,
-        "descricao": "",
-        "preco": "a",
-        "estoque": "a",
-        "idcategoria": ""
+        "descricao": "1",
+        "preco": 1.0,
+        "estoque": 1,
+        "idcategoria": 1
+    },
+    {
+        "id": 9,
+        "descricao": "a",
+        "preco": 1.0,
+        "estoque": 1,
+        "idcategoria": "a"
     }
 ]

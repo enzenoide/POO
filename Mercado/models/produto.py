@@ -20,12 +20,15 @@ class Produto:
         return self.__idcategoria
 
     def set_id(self, id):
+        if id == str:
+            raise ValueError("O id precisa ser um número")
         self.__id = id
     def set_descricao(self, descricao):
+        if descricao == int:raise ValueError("O nome do produto não pode ser um número")
         self.__descricao = descricao
     def set_preco(self, preco):
         preco = float(preco)
-        if preco < 0 : raise ValueError("O produto precisa possuir preço")
+        if preco <= 0 : raise ValueError("O produto precisa possuir preço")
         self.__preco = preco
     def set_estoque(self, estoque):
         estoque = int(estoque)
@@ -33,6 +36,8 @@ class Produto:
         self.__estoque = estoque
         
     def set_idcategoria(self, idcategoria):
+        idcategoria = int(idcategoria)
+        if idcategoria < 0: raise ValueError("O idcategoria precisa ser positivo")
         self.__idcategoria = idcategoria
 
     def __str__(self):
