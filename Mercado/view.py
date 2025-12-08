@@ -14,6 +14,10 @@ class View:
         View.cliente_inserir("admin", "admin", "1234", "1234")
 
     def cliente_autenticar(email, senha):
+        if email == "":
+            raise ValueError("O email não pode estar vazio")
+        elif senha == "":
+            raise ValueError("A senha não pode estar vazia")
         for obj in View.cliente_listar():
             if obj.get_email() == email and obj.get_senha() == senha:
                 return obj
@@ -103,6 +107,8 @@ class View:
 
 
     def categoria_inserir(id,desc):
+        if desc == "":
+            raise ValueError("Descrição não pode estar vazio")
         id = 0
         c = Categoria(id,desc)
         CategoriaDAO.inserir(c)
@@ -151,6 +157,10 @@ class View:
 
     
     def carrinho_inserir(idcliente, idproduto, qtd):
+        if idproduto == "":
+            raise ValueError("ID produto não pode estar vazio")
+        elif qtd == "":
+            raise ValueError("Quantidade não pode estar vazio")
         item = Carrinho(idproduto, qtd)
         CarrinhoDAO.inserir(idcliente, item)
 

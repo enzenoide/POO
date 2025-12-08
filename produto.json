@@ -38,7 +38,14 @@
         "id": 1,
         "descricao": "Leite",
         "preco": 15.84,
-        "estoque": 14,
+        "estoque": 11,
         "idcategoria": 1
+    },
+    {
+        "id": 8,
+        "descricao": "",
+        "preco": "a",
+        "estoque": "a",
+        "idcategoria": ""
     }
 ]

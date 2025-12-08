@@ -15,6 +15,7 @@ class Categoria:
         self.__id = id
 
     def set_descricao(self, descricao):
+        if descricao == "":raise ValueError("Descrição não pode estar vazio.")
         self.__descricao = descricao
 
     def __str__(self):

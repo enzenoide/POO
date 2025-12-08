@@ -16,10 +16,14 @@ class CarrinhoUI:
         idproduto = st.text_input("ID do produto que deseja adicionar")
         qtd = st.text_input("Quantidade")
         if st.button("Inserir"):
-            View.carrinho_inserir(st.session_state["cliente_id"],idproduto,qtd)
-            st.success("Produto adicionado no carrinho com sucesso!")
-            time.sleep(2)
-            st.rerun()
+            try:
+                View.carrinho_inserir(st.session_state["cliente_id"],idproduto,qtd)
+                st.success("Produto adicionado no carrinho com sucesso!")
+                time.sleep(2)
+                st.rerun()
+            except Exception as erro:
+                st.error(erro)
+
     def listar():
         st.header("Produtos no carrinho")
         carrinho = View.carrinho_listar_detalhado(st.session_state["cliente_id"])

@@ -13,7 +13,7 @@ class ManterProdutoUI:
         with tab4: ManterProdutoUI.excluir()
     def listar():
         Produtos= View.produto_listar()
-        if len(Produtos) == 0: st.write("Nenhum cliente cadastrado")
+        if len(Produtos) == 0: st.write("Nenhum produto cadastrado")
         else:
             list_dic = []
             for obj in Produtos: list_dic.append(obj.to_json())
@@ -25,10 +25,13 @@ class ManterProdutoUI:
         estoque = st.text_input("Me informe a quantidade do produto em estoque: ")
         idcategoria = st.text_input("Me informe o ID da categoria: ")
         if st.button("Inserir"):
-            View.produto_inserir(descricao,preco,estoque,idcategoria)
-            st.success("Produto inserido com sucesso!")
-            time.sleep(2)
-            st.rerun()
+            try:
+                View.produto_inserir(descricao,preco,estoque,idcategoria)
+                st.success("Produto inserido com sucesso!")
+                time.sleep(2)
+                st.rerun()
+            except Exception as erro:
+                st.error(erro)
     def atualizar():
         Produtos = View.produto_listar()
         if len(Produtos) == 0: st.write("Nenhumo Produto registado.")
@@ -40,18 +43,24 @@ class ManterProdutoUI:
             estoque = st.text_input("Novo estoque: ", op.get_estoque())
             idcategoria = st.text_input("ID da categoria: ", op.get_idcategoria())
             if st.button("Atualizar"):
-                View.produto_atualizar(id,descricao,preco,estoque,idcategoria)
-                st.success("Produto atualizada com sucesso")
-                time.sleep(2)
-                st.rerun()
+                try:
+                    View.produto_atualizar(id,descricao,preco,estoque,idcategoria)
+                    st.success("Produto atualizada com sucesso")
+                    time.sleep(2)
+                    st.rerun()
+                except Exception as erro:
+                    st.error(erro)
     def excluir():
         Produtos = View.produto_listar()
         if len(Produtos) == 0: st.write("Nenhum Produto registrada")
         else:
             op = st.selectbox("Exclusão de Produtos", Produtos)
             if st.button("Excluir"):
-                id = op.get_id()
-                View.produto_excluir(id)
-                st.success("Produto excluída com sucesso")
-                time.sleep(2)
-                st.rerun()
+                try:
+                    id = op.get_id()
+                    View.produto_excluir(id)
+                    st.success("Produto excluída com sucesso")
+                    time.sleep(2)
+                    st.rerun()
+                except Exception as erro:
+                    st.error(erro)

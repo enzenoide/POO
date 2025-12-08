@@ -25,12 +25,13 @@ class Produto:
         self.__descricao = descricao
     def set_preco(self, preco):
         preco = float(preco)
-        if preco < 0: raise ValueError("O produto precisa possuir preço")
+        if preco < 0 : raise ValueError("O produto precisa possuir preço")
         self.__preco = preco
     def set_estoque(self, estoque):
         estoque = int(estoque)
         if estoque < 0: raise ValueError("O estoque precisa conter algum valor")
         self.__estoque = estoque
+        
     def set_idcategoria(self, idcategoria):
         self.__idcategoria = idcategoria
 

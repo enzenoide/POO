@@ -13,11 +13,10 @@ class IndexUI:
     def menu_visitante():
         op = st.sidebar.selectbox("Menu", [
                                     "Entrar no Sistema", 
-                                    "Abrir conta", "Sair do Sistema"
+                                    "Abrir conta",
                                     ])
         if op == "Entrar no Sistema": LoginUI.main()
         if op == "Abrir conta": AbrirContaUI.main()
-        if op == "Sair do Sistema": pass
     def menu_admin():
         op = st.sidebar.selectbox("Menu", [
                                   "Cadastro de Categorias", 
@@ -42,14 +41,15 @@ class IndexUI:
         if op == "Comprar carrinho": CarrinhoUI.comprar()
         if op == "Listar minhas compras": ListarComprasUI.main()
     def sidebar():
-        if "cliente_id" not in st.session_state:
-            IndexUI.menu_visitante()
+        if "cliente_id" not in st.session_state: IndexUI.menu_visitante()
         else:
-            st.sidebar.write("Bem vindo(a)," + st.session_state["cliente_nome"])
+            st.sidebar.write("Bem-vindo(a), " + st.session_state["cliente_nome"] + "😊")
+            # usuário está logado, verifica se é o admin
             admin = st.session_state["cliente_nome"] == "admin"
             if admin: IndexUI.menu_admin()
             else: IndexUI.menu_cliente()
-            IndexUI.sair_do_sistema()
+            IndexUI.sair_do_sistema() 
+
     def sair_do_sistema():
         if st.sidebar.button("Sair"):
             del st.session_state["cliente_id"]

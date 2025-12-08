@@ -7,13 +7,6 @@
         "senha": "1234"
     },
     {
-        "id": 2,
-        "nome": "Henze",
-        "email": "h@email.com",
-        "fone": "83929292",
-        "senha": "123"
-    },
-    {
         "id": 3,
         "nome": "Henze",
         "email": "h@gmail.com",
@@ -26,5 +19,12 @@
         "email": "a",
         "fone": "a",
         "senha": "a"
+    },
+    {
+        "id": 2,
+        "nome": "Henze",
+        "email": "h@email.com",
+        "fone": "83929292",
+        "senha": "123"
     }
 ]
