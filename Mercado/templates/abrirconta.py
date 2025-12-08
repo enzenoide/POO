@@ -9,7 +9,12 @@ class AbrirContaUI:
         fone = st.text_input("informe o fone")
         senha = st.text_input("informe o senha", type = "password")
         if st.button("Abrir conta"):
-            View.cliente_criar_conta(nome,email,fone,senha)
-            st.success("Conta criada com sucesso!")
-            time.sleep(2)
-            st.rerun()
+            try:
+                View.cliente_criar_conta(nome,email,fone,senha)
+                st.success("Conta criada com sucesso!")
+                time.sleep(2)
+                st.rerun()
+            except ValueError as error:
+                st.error(error)
+            except KeyError as erro:
+                st.error(error)

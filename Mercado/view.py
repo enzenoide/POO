@@ -26,14 +26,17 @@ class View:
     def cliente_criar_conta(nome,email,fone,senha):
         for obj in View.cliente_listar():
             if obj.get_email() == email:
-                print("Já existe alguém com esse email")
-                return
+                raise ValueError("Já existe alguém com esse email")
+            elif obj.get_fone() == fone:
+                raise ValueError("Já existe alguém com esse telefone")
         View.cliente_inserir(nome,email,fone,senha)
 
     def cliente_inserir(nome,email,fone,senha):
         for obj in View.cliente_listar():
             if obj.get_email() == email:
-                raise ValueError("Já existe um usuário com este email")
+                raise KeyError("Já existe um usuário com este email")
+            elif obj.get_fone() == fone:
+                raise KeyError("Já existe alguém com esse telefone")
         id = 0
         c = Cliente(id,nome,email,fone,senha)
         ClienteDAO.inserir(c)
