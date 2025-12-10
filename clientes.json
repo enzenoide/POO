@@ -1,30 +1,9 @@
 [
     {
-        "id": 1,
-        "nome": "admin",
-        "email": "admin",
-        "fone": "1234",
-        "senha": "1234"
-    },
-    {
-        "id": 3,
-        "nome": "Henze",
-        "email": "h@gmail.com",
-        "fone": "(84) 991012814",
-        "senha": "1234"
-    },
-    {
-        "id": 4,
-        "nome": "a",
-        "email": "a",
-        "fone": "a",
-        "senha": "a"
-    },
-    {
-        "id": 2,
-        "nome": "Henze",
-        "email": "h@email.com",
-        "fone": "83929292",
-        "senha": "123"
+        "_Cliente__id": 1,
+        "_Cliente__nome": "admin",
+        "_Cliente__email": "admin",
+        "_Cliente__fone": "(84)991012814",
+        "_Cliente__senha": "12345678"
     }
 ]

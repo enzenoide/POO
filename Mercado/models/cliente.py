@@ -1,4 +1,5 @@
 import json
+import models.validacao as validacao
 from datetime import datetime
 from .carrinho import Carrinho    
 from .produto import ProdutoDAO  
@@ -11,31 +12,31 @@ class Cliente:
         self.set_senha(senha)
 
     def get_id(self):
-        return self.id
+        return self.__id
     def get_nome(self):
-        return self.nome
+        return self.__nome
     def get_email(self):
-        return self.email
+        return self.__email
     def get_fone(self):
-        return self.fone
+        return self.__fone
     def get_senha(self):
-        return self.senha
+        return self.__senha
 
     def set_id(self, id):
-        self.id = id
+        self.__id = id
     def set_nome(self, nome):
-        if nome == "": raise ValueError("Nome não pode ser vazio")
-        self.nome = nome
+        self.__nome = nome
     def set_email(self, email):
-        if email == int:raise KeyError("O e-mail não pode ser um número")
-        elif email == "": raise ValueError("Email não pode ser vazio")
-        self.email = email
+        if not validacao.validar_email(email) and email != "admin":
+            raise ValueError("E-mail inválido")
+        self.__email = email
     def set_fone(self, fone):
-        if fone == "": raise ValueError("O Telefone não pode ser vazio")
-        self.fone = fone
+        if not validacao.validar_telefone(fone):
+            raise ValueError("Telefone inválido")
+        self.__fone = fone
     def set_senha(self, senha):
-        if senha == "": raise ValueError("Senha não pode ser vazia")
-        self.senha = senha
+        if len(senha) < 8: raise ValueError("Senha não pode ter menos de 8 caracteres")
+        self.__senha = senha
 
     def __str__(self):
         return f"Cliente ID: {self.get_id()} | Nome: {self.get_nome()} | Email: {self.get_email()} | Fone: {self.get_fone()}"
@@ -51,6 +52,7 @@ class ClienteDAO:
 
     @classmethod
     def inserir(cls, obj):
+        print("DEBUG: Executando ClienteDAO.inserir...")
         cls.abrir()
         max_id = 0
         for aux in cls.objetos:
@@ -58,7 +60,9 @@ class ClienteDAO:
                 max_id = aux.get_id()
         obj.set_id(max_id + 1)
         cls.objetos.append(obj)
+        print(f"DEBUG: Cliente adicionado à lista: {obj.get_nome()} (ID: {obj.get_id()}). Total na lista: {len(cls.objetos)}")
         cls.salvar()
+        print("DEBUG: ClienteDAO.salvar chamado.")
 
     @classmethod
     def listar(cls):
@@ -104,9 +108,13 @@ class ClienteDAO:
 
     @classmethod
     def salvar(cls):
-        with open("clientes.json", "w") as arquivo:
-            json.dump([vars(obj) for obj in cls.objetos], arquivo, indent=4)
-
+        print(f"DEBUG: Abrindo 'clientes.json' para escrita. Contagem de objetos: {len(cls.objetos)}")
+        try:
+            with open("clientes.json", "w") as arquivo:
+                json.dump([vars(obj) for obj in cls.objetos], arquivo, indent=4)
+                print("DEBUG: Salvamento de 'clientes.json' CONCLUÍDO com sucesso.")
+        except Exception as e:
+            print(f"ERRO CRÍTICO no ClienteDAO.salvar: {e}")
 
 
 class Venda:

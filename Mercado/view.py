@@ -11,7 +11,7 @@ class View:
     def cliente_criar_admin():
         for obj in View.cliente_listar():
             if obj.get_email() == "admin": return
-        View.cliente_inserir("admin", "admin", "1234", "1234")
+        View.cliente_inserir("admin", "admin", "(84)991012814", "12345678")
 
     def cliente_autenticar(email, senha):
         if email == "":
@@ -21,9 +21,13 @@ class View:
         for obj in View.cliente_listar():
             if obj.get_email() == email and obj.get_senha() == senha:
                 return obj
-        return None
+        raise ValueError("O usuário não existe")
 
     def cliente_criar_conta(nome,email,fone,senha):
+        if nome == "":
+            raise ValueError("Nome não pode estar vazio")
+        elif nome.isdigit():
+            raise TypeError("Nome não pode ser um digito")
         for obj in View.cliente_listar():
             if obj.get_email() == email:
                 raise ValueError("Já existe alguém com esse email")
@@ -32,11 +36,6 @@ class View:
         View.cliente_inserir(nome,email,fone,senha)
 
     def cliente_inserir(nome,email,fone,senha):
-        for obj in View.cliente_listar():
-            if obj.get_email() == email:
-                raise KeyError("Já existe um usuário com este email")
-            elif obj.get_fone() == fone:
-                raise KeyError("Já existe alguém com esse telefone")
         id = 0
         c = Cliente(id,nome,email,fone,senha)
         ClienteDAO.inserir(c)

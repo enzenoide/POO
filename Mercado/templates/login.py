@@ -14,6 +14,6 @@ class LoginUI:
                 st.session_state["cliente_nome"] = c.get_nome()
                 time.sleep(2)
                 st.rerun()
-            except Exception as erro:
-                st.error(erro)
+            except Exception as error:
+                st.error(error)
                 

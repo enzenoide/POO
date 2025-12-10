@@ -16,5 +16,5 @@ class AbrirContaUI:
                 st.rerun()
             except ValueError as error:
                 st.error(error)
-            except KeyError as erro:
+            except Exception as error:
                 st.error(error)
