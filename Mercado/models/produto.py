@@ -1,13 +1,16 @@
 import json
 
 class Produto:
-    def __init__(self, id, descricao, preco, estoque, idcategoria):
+    def __init__(self, id, descricao, preco, estoque, idcategoria,url_imagem=None):
         self.set_id(id)
         self.set_descricao(descricao)
         self.set_preco(preco)
         self.set_estoque(estoque)
         self.set_idcategoria(idcategoria)
+        self.set_url_imagem(url_imagem)
 
+    def get_url_imagem(self):
+        return self.__url_imagem
     def get_id(self):
         return self.__id
     def get_descricao(self):
@@ -39,16 +42,18 @@ class Produto:
         idcategoria = int(idcategoria)
         if idcategoria < 0: raise ValueError("O idcategoria precisa ser positivo")
         self.__idcategoria = idcategoria
+    def set_url_imagem(self,url_imagem):
+        self.__url_imagem = url_imagem
 
     def __str__(self):
         return f"Produto ID: {self.get_id()} | Descrição: {self.get_descricao()} | Preço: R${self.get_preco():.2f} | Estoque: {self.get_estoque()} | Categoria ID: {self.get_idcategoria()}"
     
     def to_json(self):
-        return { "id" : self.get_id(), "descricao" : self.get_descricao(), "preco" : self.get_preco(), "estoque" : self.get_estoque(), "idcategoria" : self.get_idcategoria() }
+        return { "id" : self.get_id(), "descricao" : self.get_descricao(), "preco" : self.get_preco(), "estoque" : self.get_estoque(), "idcategoria" : self.get_idcategoria(), "url_imagem": self.get_url_imagem() }
 
     @staticmethod
     def from_json(dic):
-        return Produto(dic["id"], dic["descricao"], dic["preco"], dic["estoque"], dic["idcategoria"])
+        return Produto(dic["id"], dic["descricao"], dic["preco"], dic["estoque"], dic["idcategoria"],dic.get("url_imagem", None))
 
 class ProdutoDAO:
     objetos = [] 
@@ -96,23 +101,24 @@ class ProdutoDAO:
     def abrir(cls):
         cls.objetos = []
         try:
-            with open("produto.json", "r") as arquivo:
+            with open("json/produto.json", "r") as arquivo:
                 list_dic = json.load(arquivo)
                 for dic in list_dic:
-                    c = Produto(int(dic["id"]), dic["descricao"], float(dic["preco"]), int(dic["estoque"]), int(dic["idcategoria"]))
+                    c = Produto.from_json(dic)
                     cls.objetos.append(c)
         except:
             pass
 
     @classmethod
     def salvar(cls):
-        with open("produto.json", "w") as arquivo:
+        with open("json/produto.json", "w") as arquivo:
             json.dump([{
                 "id": p.get_id(),
                 "descricao": p.get_descricao(),
                 "preco": p.get_preco(),
                 "estoque": p.get_estoque(),
-                "idcategoria": p.get_idcategoria()
+                "idcategoria": p.get_idcategoria(),
+                "url_imagem": p.get_url_imagem()
             } for p in cls.objetos], arquivo, indent=4)
 
     @classmethod

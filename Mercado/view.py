@@ -33,8 +33,10 @@ class View:
                 raise ValueError("Já existe alguém com esse email")
             elif obj.get_fone() == fone:
                 raise ValueError("Já existe alguém com esse telefone")
-        View.cliente_inserir(nome,email,fone,senha)
-
+        try:
+            View.cliente_inserir(nome,email,fone,senha)
+        except (ValueError,TypeError) as e:
+            raise e
     def cliente_inserir(nome,email,fone,senha):
         id = 0
         c = Cliente(id,nome,email,fone,senha)
@@ -137,15 +139,15 @@ class View:
     def produto_listar():
         return ProdutoDAO.listar()
 
-    def produto_listar_id():
-        return ProdutoDAO.listar_id()
+    def produto_listar_id(id):
+        return ProdutoDAO.listar_id(id)
 
     def produto_atualizar(id, desc, preco, estoque, idcategoria):
         c = Produto(id, desc, preco, estoque, idcategoria)
         ProdutoDAO.atualizar(c)
 
     def produto_excluir(id):
-        c = Produto(id, "", 0, 0, 0)
+        c = Produto(id, "", 1, 0, 0)
         ProdutoDAO.excluir(c)
 
     def produto_reajustar(percentual):
@@ -163,8 +165,23 @@ class View:
             raise ValueError("ID produto não pode estar vazio")
         elif qtd == "":
             raise ValueError("Quantidade não pode estar vazio")
-        item = Carrinho(idproduto, qtd)
+        try:
+            produto = View.produto_listar_id(idproduto)
+            if produto is None:
+                raise ValueError(f"O produto com ID:{idproduto} não foi encontrado no sistema")
+            if produto.get_estoque() < int(qtd):
+                raise ValueError(f"estoque insuficiente para {produto.get_descricao()}")
+            item = Carrinho(idproduto, qtd)
+        except ValueError as e:
+            mensagem = "literal for int() with base 10"
+            if mensagem in str(e):
+                raise ValueError("O ID e a Quantidade precisam ser números")
+            raise e
+            
         CarrinhoDAO.inserir(idcliente, item)
+        
+
+        
 
     def carrinho_listar_detalhado(idcliente):
         return CarrinhoDAO.listar_detalhado(idcliente)

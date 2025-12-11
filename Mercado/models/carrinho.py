@@ -13,11 +13,13 @@ class Carrinho:
         return self.__qtd
 
     def set_idproduto(self, idproduto):
+        idproduto = int(idproduto)
+        if idproduto <= 0: raise ValueError("ID produto inválido")
         self.__idproduto = idproduto
 
     def set_qtd(self, qtd):
-        if qtd == "":
-            raise ValueError("Digite alguma quantidade")
+        qtd = int(qtd)
+        if qtd <= 0: raise ValueError("Quantidade inválida")
         self.__qtd = int(qtd)
 
     def __str__(self):
@@ -36,7 +38,7 @@ class CarrinhoDAO:
 
     @classmethod
     def abrir(cls, idcliente):
-        filename = f"carrinho_{idcliente}.json"
+        filename = f"json/carrinho_{idcliente}.json"
         cls.objetos = []
         try:
             with open(filename, "r") as arquivo:
@@ -48,7 +50,7 @@ class CarrinhoDAO:
 
     @classmethod
     def salvar(cls, idcliente):
-        filename = f"carrinho_{idcliente}.json"
+        filename = f"json/carrinho_{idcliente}.json"
         with open(filename, "w") as arquivo:
             json.dump([{
                 "idproduto": c.get_idproduto(),

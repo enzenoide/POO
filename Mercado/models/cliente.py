@@ -98,20 +98,20 @@ class ClienteDAO:
     def abrir(cls):
         cls.objetos = []
         try:
-            with open("clientes.json", "r") as arquivo:
+            with open("json/clientes.json", "r") as arquivo:
                 lista = json.load(arquivo)
                 for dic in lista:
-                    c = Cliente(dic["id"], dic["nome"], dic["email"], dic["fone"], dic["senha"])
+                    c = Cliente.from_json(dic)
                     cls.objetos.append(c)
-        except:
+        except(FileNotFoundError,json.JSONDecodeError):
             pass
 
     @classmethod
     def salvar(cls):
         print(f"DEBUG: Abrindo 'clientes.json' para escrita. Contagem de objetos: {len(cls.objetos)}")
         try:
-            with open("clientes.json", "w") as arquivo:
-                json.dump([vars(obj) for obj in cls.objetos], arquivo, indent=4)
+            with open("json/clientes.json", "w") as arquivo:
+                json.dump([obj.to_json() for obj in cls.objetos], arquivo, indent=4)
                 print("DEBUG: Salvamento de 'clientes.json' CONCLUÍDO com sucesso.")
         except Exception as e:
             print(f"ERRO CRÍTICO no ClienteDAO.salvar: {e}")
@@ -203,7 +203,7 @@ class VendaDAO:
     def abrir(cls):
         cls.objetos = []
         try:
-            with open("vendas.json", "r") as arquivo:
+            with open("json/vendas.json", "r") as arquivo:
                 list_dic = json.load(arquivo)
                 for dic in list_dic:
                     carrinho_objs = [Carrinho(i["idproduto"], i["qtd"]) for i in dic.get("carrinho", [])]
@@ -247,5 +247,5 @@ class VendaDAO:
                 "nome_cliente": nome_cliente
             })
 
-        with open("vendas.json", "w") as arquivo:
+        with open("json/vendas.json", "w") as arquivo:
             json.dump(dados, arquivo, indent=4)

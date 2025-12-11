@@ -76,7 +76,7 @@ class CategoriaDAO:
     def abrir(cls):
         cls.objetos = []
         try:
-            with open("categoria.json", "r") as arquivo:
+            with open("json/categoria.json", "r") as arquivo:
                 list_dic = json.load(arquivo)
                 for dic in list_dic:
                     c = Categoria(dic["id"], dic["descricao"])
@@ -86,7 +86,7 @@ class CategoriaDAO:
 
     @classmethod
     def salvar(cls):
-        with open("categoria.json", "w") as arquivo:
+        with open("json/categoria.json", "w") as arquivo:
             json.dump(
                 [{"id": c.get_id(), "descricao": c.get_descricao()} for c in cls.objetos],
                 arquivo,

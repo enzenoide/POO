@@ -6,40 +6,156 @@ import pandas as pd
 class CarrinhoUI:
     def inserir():
         st.header("Inserir produto no carrinho")
-        Produtos= View.produto_listar()
-        if len(Produtos) == 0: st.write("Nenhum cliente cadastrado")
-        else:
-            list_dic = []
-            for obj in Produtos: list_dic.append(obj.to_json())
-            df = pd.DataFrame(list_dic)
-            st.dataframe(df, hide_index = True, column_order = ["id","descricao","preco","estoque","idcategoria"])
-        idproduto = st.text_input("ID do produto que deseja adicionar")
-        qtd = st.text_input("Quantidade")
-        if st.button("Inserir"):
-            try:
-                View.carrinho_inserir(st.session_state["cliente_id"],idproduto,qtd)
-                st.success("Produto adicionado no carrinho com sucesso!")
-                time.sleep(2)
-                st.rerun()
-            except Exception as erro:
-                st.error(erro)
+        Produtos = View.produto_listar()
+        
+        if len(Produtos) == 0: 
+            st.write("Nenhum produto cadastrado.")
+            return
 
+        num_colunas = 3
+        colunas = st.columns(num_colunas)
+        largura_imagem = 150
+        
+        for index, produto in enumerate(Produtos):
+            produto_id = produto.get_id()
+            estoque_atual = produto.get_estoque()
+            pode_adicionar = estoque_atual > 0 
+            
+            
+            min_valor_input = 1 if pode_adicionar else 0
+            col = colunas[index % num_colunas]
+            
+            produto_id = produto.get_id()
+            estoque_atual = produto.get_estoque() 
+            
+           
+            pode_adicionar = estoque_atual > 0 
+
+            with col:
+                with st.container(border=True): 
+                    caminho_imagem = produto.get_url_imagem()
+
+                    
+                    if caminho_imagem:
+                        img_col1, img_col2, img_col3 = st.columns([1, 4, 1])
+                        with img_col2:
+                            st.image(caminho_imagem, 
+                                     caption=f"ID: {produto_id}", 
+                                     width=largura_imagem)
+                    else:
+                        st.markdown(f"<div align='center'>**(sem imagem) - ID: {produto_id}**</div>", unsafe_allow_html=True)
+
+                    st.markdown("---") 
+                    
+                    st.markdown(f"**{produto.get_descricao()}**")
+                    st.markdown(f"**R$ {produto.get_preco():.2f}**")
+                    
+                    
+                    if not pode_adicionar:
+                        st.markdown("<div align='center'><font color='red'>ESTOQUE ESGOTADO</font></div>", unsafe_allow_html=True)
+                    else:
+                        st.markdown(f"<div align='center'>Estoque: {estoque_atual}</div>", unsafe_allow_html=True)
+
+                    
+                    qtd = st.number_input(
+                        "Qtd:", 
+                        
+                        min_value=min_valor_input, 
+                        
+                        max_value=estoque_atual, 
+                        
+                        value=min_valor_input, 
+                        
+                        disabled=not pode_adicionar, 
+                        key=f"qtd_{produto_id}"
+                    )
+
+                    
+                    if st.button("🛒 Adicionar", key=f"add_{produto_id}", disabled=not pode_adicionar):
+                        try:
+                            View.carrinho_inserir(st.session_state["cliente_id"], produto_id, qtd)
+                            st.success(f"'{produto.get_descricao()}' adicionado(a) com sucesso!")
+                            time.sleep(1)
+                            st.rerun()
+                        except ValueError as error:
+                            st.error(error)
+                        except Exception as error:
+                            st.error(f"Erro ao adicionar produto: {error}")
+            
     def listar():
         st.header("Produtos no carrinho")
-        carrinho = View.carrinho_listar_detalhado(st.session_state["cliente_id"])
-        if len(carrinho) == 0: st.write("Nenhum produto no carrinho")
-        else:
-            df = pd.DataFrame(carrinho)
-            st.dataframe(df, hide_index = True, column_order = ["id_produto","descricao","preco","quantidade","total"])
+        # Assumindo que esta função retorna objetos ou dicionários que incluem 
+        # 'url_imagem', 'id_produto', 'descricao', 'preco', 'quantidade', 'total'
+        carrinho_detalhado = View.carrinho_listar_detalhado(st.session_state["cliente_id"])
+
+        if not carrinho_detalhado:
+            st.write("Nenhum produto no carrinho.")
+            return
+
+        num_colunas = 3 # Exibe os itens do carrinho em 3 colunas
+        colunas = st.columns(num_colunas)
+
+        # DataFrame para calcular o total geral (Opcional, mas útil)
+        df = pd.DataFrame(carrinho_detalhado)
+        
+        for index, item in enumerate(carrinho_detalhado):
+            col = colunas[index % num_colunas]
+            
+            # Adapte as chaves do dicionário/objeto retornado pela sua View
+            # Use .get() para segurança, caso a View não retorne todos os campos
+            id_produto = item.get('id_produto')
+            descricao = item.get('descricao')
+            preco = item.get('preco')
+            quantidade = item.get('quantidade')
+            total_item = item.get('total')
+            caminho_imagem = View.produto_listar_id(id_produto).get_url_imagem() # Buscando a URL da Imagem na View
+            
+            with col:
+                with st.container(border=True): 
+                    # 1. IMAGEM CENTRALIZADA
+                    img_col1, img_col2, img_col3 = st.columns([1, 4, 1])
+                    with img_col2:
+                        st.image(caminho_imagem, width=150) 
+                    
+                    st.markdown("---") 
+
+                    # 2. INFORMAÇÕES DO ITEM (Centralizadas)
+                    st.markdown(f"<div align='center'>**{descricao}**</div>", unsafe_allow_html=True)
+                    st.markdown(f"<div align='center'>**Qtd: {quantidade}**</div>", unsafe_allow_html=True)
+                    st.markdown(f"<div align='center'>R$ {preco:.2f} (un.)</div>", unsafe_allow_html=True)
+                    st.markdown(f"<div align='center'>**Subtotal: R$ {total_item:.2f}**</div>", unsafe_allow_html=True)
+        
+        st.markdown("---")
+        
+        # Calcular e exibir o total geral
+        total_geral = df['total'].sum()
+        st.markdown(f"## 💰 Total no Carrinho: R$ {total_geral:.2f}")
+
+        
     def comprar():
         st.header("Comprar Carrinho")
-        carrinho = View.carrinho_listar_detalhado(st.session_state["cliente_id"])
-        if len(carrinho) == 0: st.write("Nenhum produto no carrinho")
-        else:
-            df = pd.DataFrame(carrinho)
-            st.dataframe(df, hide_index = True, column_order = ["id_produto","descricao","preco","quantidade","total"])
-            if st.button("Comprar"):
+        carrinho_detalhado = View.carrinho_listar_detalhado(st.session_state["cliente_id"])
+
+        if not carrinho_detalhado:
+            st.write("Nenhum produto no carrinho.")
+            return
+        
+        
+        df = pd.DataFrame(carrinho_detalhado)
+        st.dataframe(df, 
+                    hide_index=True, 
+                    column_order=["id_produto", "descricao", "preco", "quantidade", "total"])
+
+        total_geral = df['total'].sum()
+
+        st.markdown("---")
+        st.success(f"## Total a Pagar: R$ {total_geral:.2f}")
+
+        if st.button("✅ Confirmar Compra e Pagar"):
+            try:
                 View.carrinho_comprar(st.session_state["cliente_id"])
-                st.success("Carrinho comprado com sucesso")
+                st.success("Carrinho comprado com sucesso!")
                 time.sleep(2)
                 st.rerun()
+            except Exception as error:
+                st.error(error)

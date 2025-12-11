@@ -29,7 +29,7 @@ class VendaItem:
     def set_idvenda(self, idvenda):
         self.__idvenda = idvenda
     def set_idproduto(self, idproduto):
-        self.__idproduto = idproduto
+        self.__idproduto = int(idproduto)
 
     def __str__(self):
         return f"Item ID: {self.get_id()} | Prod ID: {self.get_idproduto()} | Qtd: {self.get_qtd()} | Preço: R${self.get_preco():.2f}"
@@ -81,7 +81,7 @@ class VendaitemDAO:
     def abrir(cls):
         cls.objetos = []
         try:
-            with open("vendaitens.json", "r") as arquivo:
+            with open("json/vendaitens.json", "r") as arquivo:
                 list_dic = json.load(arquivo)
                 for dic in list_dic:
                     c = VendaItem(dic["id"], dic["qtd"], dic["preco"], dic["idvenda"], dic["idproduto"])
@@ -109,5 +109,5 @@ class VendaitemDAO:
                 "descricao_produto": descricao
             })
 
-        with open("vendaitens.json", "w") as arquivo:
+        with open("json/vendaitens.json", "w") as arquivo:
             json.dump(dados, arquivo, indent=4)
