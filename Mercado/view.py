@@ -110,7 +110,7 @@ class View:
             print("❌ Nenhuma venda registrada.")
 
 
-    def categoria_inserir(id,desc):
+    def categoria_inserir(desc):
         if desc == "":
             raise ValueError("Descrição não pode estar vazio")
         id = 0
@@ -127,8 +127,8 @@ class View:
         c = Categoria(id,desc)
         CategoriaDAO.atualizar(c)
 
-    def categoria_excluir(id,desc):
-        desc = ""
+    def categoria_excluir(id):
+        desc = "a"
         c = Categoria(id,desc)
         CategoriaDAO.excluir(c)
 

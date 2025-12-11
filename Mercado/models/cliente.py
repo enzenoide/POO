@@ -25,6 +25,7 @@ class Cliente:
     def set_id(self, id):
         self.__id = id
     def set_nome(self, nome):
+        if nome == "": raise ValueError("Nome não pode estar vazio")
         self.__nome = nome
     def set_email(self, email):
         if not validacao.validar_email(email) and email != "admin":

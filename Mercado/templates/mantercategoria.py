@@ -27,8 +27,8 @@ class ManterCategoriaUI:
                 st.success("Categoria inserida com sucesso!")
                 time.sleep(2)
                 st.rerun()
-            except:
-                st.error("Descrição não pode estar vazio")
+            except Exception as error:
+                st.error(error)
     def atualizar():
         categorias = View.categoria_listar()
         if len(categorias) == 0: st.write("Nenhuma categoria registada.")

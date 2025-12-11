@@ -1,22 +1,18 @@
 [
     {
-        "id": 1,
-        "descricao": "Laticinios"
-    },
-    {
         "id": 2,
-        "descricao": "higiene"
+        "descricao": "RPG"
     },
     {
         "id": 5,
-        "descricao": "Doces"
+        "descricao": "Indie"
     },
     {
         "id": 4,
-        "descricao": "Limpeza"
+        "descricao": "Mundo Aberto"
     },
     {
         "id": 3,
-        "descricao": "Cereais"
+        "descricao": "Ação-Aventura"
     }
 ]
