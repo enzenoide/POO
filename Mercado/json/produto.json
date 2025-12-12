@@ -2,33 +2,33 @@
     {
         "id": 5,
         "descricao": "Luigi's mansion",
-        "preco": 9.24,
-        "estoque": 122,
+        "preco": 9.1476,
+        "estoque": 119,
         "idcategoria": 5,
         "url_imagem": "assets/luigis.jpg"
     },
     {
-        "id": 2,
-        "descricao": "Minecraft",
-        "preco": 7.26,
-        "estoque": 0,
-        "idcategoria": 2,
-        "url_imagem": "assets/MINE.png"
-    },
-    {
         "id": 1,
         "descricao": "GTA",
-        "preco": 17.424,
-        "estoque": 9,
+        "preco": 17.24976,
+        "estoque": 6,
         "idcategoria": 1,
         "url_imagem": "assets/GTA.png"
     },
     {
         "id": 4,
         "descricao": "The Witcher 3",
-        "preco": 21.78,
-        "estoque": 129,
+        "preco": 21.5622,
+        "estoque": 126,
         "idcategoria": 4,
         "url_imagem": "assets/WITCHER.png"
+    },
+    {
+        "id": 2,
+        "descricao": "Minecraft",
+        "preco": 7.1874,
+        "estoque": 118,
+        "idcategoria": 2,
+        "url_imagem": "assets/MINE.png"
     }
 ]

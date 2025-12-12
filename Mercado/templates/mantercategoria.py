@@ -34,14 +34,17 @@ class ManterCategoriaUI:
         if len(categorias) == 0: st.write("Nenhuma categoria registada.")
         else:
             op = st.selectbox("Atualização da categoria: ", categorias)
-            id = st.text_input("ID da categoria a ser atualizada: ", op.get_id())
+            id = op.get_id()
             descricao = st.text_input("Novo nome da categoria: ", op.get_descricao())
             if st.button("Atualizar"):
-                id = op.get_id()
-                View.categoria_atualizar(id,descricao)
-                st.success("Categoria atualizada com sucesso")
-                time.sleep(2)
-                st.rerun()
+                try:
+                    id = op.get_id()
+                    View.categoria_atualizar(id,descricao)
+                    st.success("Categoria atualizada com sucesso")
+                    time.sleep(2)
+                    st.rerun()
+                except Exception as error:
+                    st.error(error)
     def excluir():
         categorias = View.categoria_listar()
         if len(categorias) == 0: st.write("Nenhuma categoria registrada")

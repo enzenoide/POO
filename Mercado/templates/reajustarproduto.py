@@ -32,4 +32,4 @@ class ReajustarProdutoUI:
                 time.sleep(2)
                 st.rerun()
             except:
-                st.error("Valor inválido! Digite um número.")
+                st.error("Valor inválido! Digite um número válido.")

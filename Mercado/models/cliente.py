@@ -250,3 +250,17 @@ class VendaDAO:
 
         with open("json/vendas.json", "w") as arquivo:
             json.dump(dados, arquivo, indent=4)
+            
+    @classmethod
+    def listar_por_cliente(cls, idcliente):
+        """Lista todas as vendas de um cliente específico."""
+        cls.abrir() # Garante que os objetos sejam carregados do JSON
+        
+        vendas_cliente = []
+        for obj in cls.objetos:
+            # Compara o ID do cliente da venda com o ID desejado
+            if obj.get_idcliente() == idcliente:
+                # Retorna o dicionário serializado da venda (com dados básicos)
+                vendas_cliente.append(obj.to_json()) 
+                
+        return vendas_cliente

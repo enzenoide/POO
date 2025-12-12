@@ -1,6 +1,7 @@
 import streamlit as st
 from view import View
 import pandas as pd
+from models.cliente import ClienteDAO 
 
 class ListarComprasUI:
     def main():
@@ -15,6 +16,16 @@ class ListarComprasUI:
 
         for v in compras:
             carrinho_formatado = []
+            
+           
+            nome_cliente = v.get("nome_cliente") 
+            if nome_cliente in [None, ""]:
+                
+                cliente = ClienteDAO.listar_id(v["idcliente"])
+                nome_cliente = cliente.get_nome() if cliente else "Cliente Desconhecido"
+            
+            
+            
             for item in v["carrinho"]:
                 nome = item.get("descricao_produto", "Produto não encontrado")
                 qtd = item.get("qtd", 0)
@@ -26,7 +37,7 @@ class ListarComprasUI:
                 "carrinho": "\n".join(carrinho_formatado),
                 "total": v.get("total", 0),
                 "idcliente": v["idcliente"],
-                "nome_cliente": v.get("nome_cliente", "Desconhecido")
+                "nome_cliente": nome_cliente # 
             })
         
         df = pd.DataFrame(list_dic)

@@ -33,8 +33,12 @@ class VendaItem:
 
     def __str__(self):
         return f"Item ID: {self.get_id()} | Prod ID: {self.get_idproduto()} | Qtd: {self.get_qtd()} | Preço: R${self.get_preco():.2f}"
+    def to_json(self):
+        return { "id" : self.get_id(), "qtd" : self.get_qtd(), "preco" : self.get_preco(), "idvenda" : self.get_idvenda(), "idproduto" : self.get_idproduto() }
 
-
+    @staticmethod
+    def from_json(dic):
+        return VendaItem(dic["id"], dic["qtd"], dic["preco"], dic["idvenda"], dic["idproduto"])
 class VendaitemDAO:
     objetos = []
 
@@ -94,11 +98,12 @@ class VendaitemDAO:
         dados = []
         for v in cls.objetos:
            
-            produto = ProdutoDAO.buscar(v.get_idproduto())
+            produto = ProdutoDAO.listar_id(str(v.get_idproduto()))
 
             
             descricao = produto.get_descricao() if produto else "Produto não encontrado"
-
+            # ADICIONE ESTE LOG CRÍTICO
+            print(f"VendaitemDAO.salvar: Gravando item {v.get_idproduto()}. Descrição: '{descricao}'")
            
             dados.append({
                 "id": v.get_id(),
@@ -111,3 +116,11 @@ class VendaitemDAO:
 
         with open("json/vendaitens.json", "w") as arquivo:
             json.dump(dados, arquivo, indent=4)
+    @classmethod
+    def listar_por_venda(cls, idvenda):
+        cls.abrir()
+        itens_venda = []
+        for obj in cls.objetos:
+            if obj.get_idvenda() == idvenda:
+                itens_venda.append(obj.to_json()) 
+        return itens_venda

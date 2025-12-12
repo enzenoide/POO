@@ -23,9 +23,7 @@ class Produto:
         return self.__idcategoria
 
     def set_id(self, id):
-        if id == str:
-            raise ValueError("O id precisa ser um número")
-        self.__id = id
+        self.__id = int(id)
     def set_descricao(self, descricao):
         if descricao == "": raise ValueError("Descrição não pode estar vazio")
         self.__descricao = descricao
@@ -77,11 +75,20 @@ class ProdutoDAO:
     @classmethod
     def listar_id(cls, id):
         cls.abrir()
+        id_int = int(id)
+        
+        # ADICIONE ESTE LOG:
+        print(f"ProdutoDAO: Buscando ID {id_int}...")
+        
         for obj in cls.objetos:
-            if int(obj.get_id()) == int(id):
+            if obj.get_id() == id_int:
+                # ADICIONE ESTE LOG:
+                print(f"ProdutoDAO: SUCESSO! Produto {id_int} encontrado.")
                 return obj
+        
+        # ADICIONE ESTE LOG:
+        print(f"ProdutoDAO: FALHA! Produto ID {id_int} não encontrado na lista atual.")
         return None
-
     @classmethod
     def atualizar(cls, obj):
         aux = cls.listar_id(obj.get_id())
@@ -106,9 +113,11 @@ class ProdutoDAO:
                 for dic in list_dic:
                     c = Produto.from_json(dic)
                     cls.objetos.append(c)
-        except:
+            # ADICIONE ESTE LOG:
+            print(f"ProdutoDAO: {len(cls.objetos)} produtos carregados com sucesso.")
+        except Exception as e:
+            print(f"ProdutoDAO: ERRO AO ABRIR (Lista de objetos vazia). Detalhes: {e}")
             pass
-
     @classmethod
     def salvar(cls):
         with open("json/produto.json", "w") as arquivo:
@@ -127,10 +136,3 @@ class ProdutoDAO:
             novo_preco = obj.get_preco() + (obj.get_preco() * (percentual / 100))
             obj.set_preco(novo_preco)
             cls.atualizar(obj)
-    @classmethod
-    def buscar(cls, id):
-        produtos = cls.listar()
-        for p in produtos:
-            if p.get_id() == id:
-                return p
-        return None

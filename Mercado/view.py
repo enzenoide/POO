@@ -57,31 +57,30 @@ class View:
         ClienteDAO.excluir(id)
 
     def cliente_listar_compras(idcliente):
-        try:
-            with open("vendas.json", "r") as arquivo:
-                vendas = json.load(arquivo)
-        except:
-            print("Nenhuma venda registrada ainda.")
-            return []
-
-        compras = []
-
-        for v in vendas:
-            if int(v["idcliente"]) == int(idcliente):
+        vendas = VendaDAO.listar_por_cliente(idcliente)
+    
+        lista_vendas_detalhadas = []
+        
+        
+        for venda_dic in vendas:
+            id_venda = venda_dic.get('id')
+            
+           
+            if id_venda:
                 
-                compras.append(v)
-
-                print(f"\n🧾 Venda ID: {v['id']} | Total: R${v['total']:.2f} | Data: {v['data']}")
-                print("Itens:")
-
-                for item in v["carrinho"]:
-                    nome_produto = item.get("descricao_produto", "Produto não encontrado")
-                    qtd = item.get("qtd", 0)
-                    print(f"  - {nome_produto} | Quantidade: {qtd}")
-
-        if not compras:
+                itens_comprados = VendaitemDAO.listar_por_venda(id_venda)
+                
+                venda_dic['carrinho'] = itens_comprados
+            else:
+                venda_dic['carrinho'] = []
+                
+            lista_vendas_detalhadas.append(venda_dic)
+        
+        
+        if not lista_vendas_detalhadas:
             print("❌ Você não possui nenhuma compra.")
-        return compras
+            
+        return lista_vendas_detalhadas
     def cliente_listar_vendas():
         vendas = VendaDAO.listar()
         itens = VendaitemDAO.listar()
@@ -124,6 +123,7 @@ class View:
         return CategoriaDAO.listar_id()
 
     def categoria_atualizar(id,desc):
+        if id == "": raise ValueError("ID não pode estar vazio")
         c = Categoria(id,desc)
         CategoriaDAO.atualizar(c)
 
@@ -151,6 +151,8 @@ class View:
         ProdutoDAO.excluir(c)
 
     def produto_reajustar(percentual):
+        if percentual < 0:
+            raise ValueError("Percentual não pode ser negativo.")
         ProdutoDAO.reajustar(percentual)
 
     def produto_buscar(id):

@@ -21,8 +21,8 @@ class ManterProdutoUI:
             st.dataframe(df, hide_index = True, column_order = ["id","descricao","preco","estoque","idcategoria"])
     def inserir():
         descricao = st.text_input("Me informe o nome do produto: ")
-        preco = st.text_input("Me informe o novo preço do produto: ")
-        estoque = st.text_input("Me informe a quantidade do produto em estoque: ")
+        preco = st.number_input("Me informe o novo preço do produto: ")
+        estoque = st.number_input("Me informe a quantidade do produto em estoque: ")
         idcategoria = st.text_input("Me informe o ID da categoria: ")
         if st.button("Inserir"):
             try:
@@ -41,10 +41,10 @@ class ManterProdutoUI:
         if len(Produtos) == 0: st.write("Nenhumo Produto registado.")
         else:
             op = st.selectbox("Atualização do Produto: ", Produtos)
-            id = st.text_input("ID do produto a ser atualizado: ", op.get_id())
+            id = op.get_id()
             descricao = st.text_input("Nova descrição: ")
-            preco = st.text_input("Novo preço: ", op.get_preco())
-            estoque = st.text_input("Novo estoque: ", op.get_estoque())
+            preco = st.number_input("Novo preço: ", op.get_preco())
+            estoque = st.number_input("Novo estoque: ", op.get_estoque())
             idcategoria = st.text_input("ID da categoria: ", op.get_idcategoria())
             if st.button("Atualizar"):
                 try:
