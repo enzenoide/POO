@@ -136,7 +136,7 @@ class Venda:
         return self.__idcliente
 
     def set_id(self, id):
-        self.__id = id
+        self.__id = int(id)
     def set_data(self, data):
         if isinstance(data, str):
             data = datetime.fromisoformat(data)

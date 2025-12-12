@@ -1,14 +1,10 @@
 [
     {
-        "idproduto": 10,
-        "qtd": 2
+        "idproduto": 5,
+        "qtd": 1
     },
     {
         "idproduto": 1,
-        "qtd": 2
-    },
-    {
-        "idproduto": 4,
         "qtd": 1
     }
 ]

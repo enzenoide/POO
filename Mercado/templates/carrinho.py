@@ -84,8 +84,6 @@ class CarrinhoUI:
             
     def listar():
         st.header("Produtos no carrinho")
-        # Assumindo que esta função retorna objetos ou dicionários que incluem 
-        # 'url_imagem', 'id_produto', 'descricao', 'preco', 'quantidade', 'total'
         carrinho_detalhado = View.carrinho_listar_detalhado(st.session_state["cliente_id"])
 
         if not carrinho_detalhado:
@@ -95,39 +93,36 @@ class CarrinhoUI:
         num_colunas = 3 # Exibe os itens do carrinho em 3 colunas
         colunas = st.columns(num_colunas)
 
-        # DataFrame para calcular o total geral (Opcional, mas útil)
+       
         df = pd.DataFrame(carrinho_detalhado)
         
         for index, item in enumerate(carrinho_detalhado):
             col = colunas[index % num_colunas]
             
-            # Adapte as chaves do dicionário/objeto retornado pela sua View
-            # Use .get() para segurança, caso a View não retorne todos os campos
+            
+            
             id_produto = item.get('id_produto')
             descricao = item.get('descricao')
             preco = item.get('preco')
             quantidade = item.get('quantidade')
             total_item = item.get('total')
-            caminho_imagem = View.produto_listar_id(id_produto).get_url_imagem() # Buscando a URL da Imagem na View
+            caminho_imagem = View.produto_listar_id(id_produto).get_url_imagem() 
             
             with col:
                 with st.container(border=True): 
-                    # 1. IMAGEM CENTRALIZADA
                     img_col1, img_col2, img_col3 = st.columns([1, 4, 1])
                     with img_col2:
                         st.image(caminho_imagem, width=150) 
                     
                     st.markdown("---") 
 
-                    # 2. INFORMAÇÕES DO ITEM (Centralizadas)
-                    st.markdown(f"<div align='center'>**{descricao}**</div>", unsafe_allow_html=True)
-                    st.markdown(f"<div align='center'>**Qtd: {quantidade}**</div>", unsafe_allow_html=True)
-                    st.markdown(f"<div align='center'>R$ {preco:.2f} (un.)</div>", unsafe_allow_html=True)
-                    st.markdown(f"<div align='center'>**Subtotal: R$ {total_item:.2f}**</div>", unsafe_allow_html=True)
+                    st.markdown(f"**{descricao}**")
+                    st.markdown(f"**Qtd: {quantidade}**")
+                    st.markdown(f"R$ {preco:.2f} (un.)")
+                    st.markdown(f"**Subtotal: R$ {total_item:.2f}**")
         
         st.markdown("---")
         
-        # Calcular e exibir o total geral
         total_geral = df['total'].sum()
         st.markdown(f"## 💰 Total no Carrinho: R$ {total_geral:.2f}")
 

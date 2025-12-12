@@ -1,3 +1,18 @@
 [
-    
+    {
+        "id": 1,
+        "qtd": 2,
+        "preco": 17.424,
+        "idvenda": 1,
+        "idproduto": 1,
+        "descricao_produto": "GTA"
+    },
+    {
+        "id": 2,
+        "qtd": 1,
+        "preco": 21.78,
+        "idvenda": 1,
+        "idproduto": 4,
+        "descricao_produto": "The Witcher 3"
+    }
 ]
