@@ -23,23 +23,35 @@ class Produto:
         return self.__idcategoria
 
     def set_id(self, id):
+        if id is None:
+            self.__id = 0 
+            return
         self.__id = int(id)
     def set_descricao(self, descricao):
-        if descricao == "": raise ValueError("Descrição não pode estar vazio")
+        if descricao == "":
+            raise ValueError("Descrição não pode estar vazio")
         self.__descricao = descricao
     def set_preco(self, preco):
+        if preco is None or str(preco).strip() == "":
+             raise ValueError("O produto precisa possuir preço.")
+             
         preco = float(preco)
-        if preco <= 0 : raise ValueError("O produto precisa possuir preço")
+        if preco <= 0 : 
+            raise ValueError("O produto precisa possuir preço positivo")
         self.__preco = preco
     def set_estoque(self, estoque):
-        estoque = int(estoque)
-        if estoque < 0: raise ValueError("O estoque precisa conter algum valor")
+        if estoque is None or str(estoque).strip() == "":
+             raise ValueError("O estoque precisa ser informado.")
+             
+        estoque = float(estoque)
+        if estoque < 0: 
+            raise ValueError("O estoque não pode ser negativo")
         self.__estoque = estoque
         
     def set_idcategoria(self, idcategoria):
-        idcategoria = int(idcategoria)
-        if idcategoria < 0: raise ValueError("O idcategoria precisa ser positivo")
-        self.__idcategoria = idcategoria
+        if idcategoria is None or str(idcategoria).strip() == "":
+            raise ValueError("ID da Categoria não pode ser vazio.")
+        self.__idcategoria = int(idcategoria)
     def set_url_imagem(self,url_imagem):
         self.__url_imagem = url_imagem
 
@@ -77,16 +89,16 @@ class ProdutoDAO:
         cls.abrir()
         id_int = int(id)
         
-        # ADICIONE ESTE LOG:
+   
         print(f"ProdutoDAO: Buscando ID {id_int}...")
         
         for obj in cls.objetos:
             if obj.get_id() == id_int:
-                # ADICIONE ESTE LOG:
+                
                 print(f"ProdutoDAO: SUCESSO! Produto {id_int} encontrado.")
                 return obj
         
-        # ADICIONE ESTE LOG:
+
         print(f"ProdutoDAO: FALHA! Produto ID {id_int} não encontrado na lista atual.")
         return None
     @classmethod
@@ -113,7 +125,7 @@ class ProdutoDAO:
                 for dic in list_dic:
                     c = Produto.from_json(dic)
                     cls.objetos.append(c)
-            # ADICIONE ESTE LOG:
+          
             print(f"ProdutoDAO: {len(cls.objetos)} produtos carregados com sucesso.")
         except Exception as e:
             print(f"ProdutoDAO: ERRO AO ABRIR (Lista de objetos vazia). Detalhes: {e}")

@@ -21,39 +21,88 @@ class ManterProdutoUI:
             st.dataframe(df, hide_index = True, column_order = ["id","descricao","preco","estoque","idcategoria"])
     def inserir():
         descricao = st.text_input("Me informe o nome do produto: ")
-        preco = st.number_input("Me informe o novo preço do produto: ")
-        estoque = st.number_input("Me informe a quantidade do produto em estoque: ")
-        idcategoria = st.text_input("Me informe o ID da categoria: ")
-        if st.button("Inserir"):
+        preco = st.number_input("Me informe o preço do produto: ", value=0.01, min_value=0.01)
+        estoque = st.number_input("Me informe a quantidade do produto em estoque: ", value=1.0, min_value=1.0)
+            
+            
+        idcategoria = st.text_input("Me informe o ID da categoria: ", value="1")
+        
+        if st.button("Inserir"):     
             try:
-                View.produto_inserir(descricao,preco,estoque,idcategoria)
+                View.produto_inserir(descricao, preco, estoque, idcategoria)
                 st.success("Produto inserido com sucesso!")
                 time.sleep(2)
                 st.rerun()
-            except ValueError:
-                st.error("O preço,estoque e ID precisam ser números válidos e positivos")
+            except ValueError as e:
+                st.error(f"Erro de Validação: {e}")
             except KeyError as erro:
-                st.error(f"falta o campo {erro} na entrada de dados")
+                st.error(f"Falta o campo {erro} na entrada de dados.")
             except Exception as erro:
                 st.error(erro)
     def atualizar():
         Produtos = View.produto_listar()
-        if len(Produtos) == 0: st.write("Nenhumo Produto registado.")
-        else:
-            op = st.selectbox("Atualização do Produto: ", Produtos)
-            id = op.get_id()
-            descricao = st.text_input("Nova descrição: ")
-            preco = st.number_input("Novo preço: ", op.get_preco())
-            estoque = st.number_input("Novo estoque: ", op.get_estoque())
-            idcategoria = st.text_input("ID da categoria: ", op.get_idcategoria())
-            if st.button("Atualizar"):
-                try:
-                    View.produto_atualizar(id,descricao,preco,estoque,idcategoria)
-                    st.success("Produto atualizada com sucesso")
-                    time.sleep(2)
-                    st.rerun()
-                except Exception as erro:
-                    st.error(erro)
+        
+        if len(Produtos) == 0: 
+            st.write("Nenhum Produto registrado.")
+            return
+
+       
+        categorias = View.categoria_listar()
+        
+        
+        opcoes_categorias = {f"{c.get_descricao()} (ID: {c.get_id()})": c.get_id() for c in categorias}
+        
+        if not opcoes_categorias:
+            st.warning("Não há categorias cadastradas. Cadastre uma categoria antes de atualizar produtos.")
+            return
+
+       
+        op = st.selectbox("Atualização do Produto: ", Produtos)
+        id = op.get_id()
+        
+        
+        
+        
+        id_categoria_atual = op.get_idcategoria()
+        categoria_atual_str = next(
+            (desc_id for desc_id, cat_id in opcoes_categorias.items() if str(cat_id) == str(id_categoria_atual)),
+            "Categoria não encontrada (ID: " + str(id_categoria_atual) + ")"
+        )
+        
+        
+        descricao = st.text_input("Nova descrição: ", value=op.get_descricao()) 
+        
+        preco = st.number_input(
+            "Novo preço: ", 
+            value=op.get_preco(),
+            min_value=0.01 
+        )
+        
+        estoque = st.number_input(
+            "Novo estoque: ", 
+            value=op.get_estoque(),
+            min_value=0.0,
+            step=1.0
+        )
+        
+        
+        categoria_selecionada = st.selectbox(
+            "Nova Categoria: ",
+            options=list(opcoes_categorias.keys()),
+            index=list(opcoes_categorias.keys()).index(categoria_atual_str) if categoria_atual_str in opcoes_categorias else 0
+        )
+        
+       
+        idcategoria = opcoes_categorias[categoria_selecionada]
+
+        if st.button("Atualizar"):
+            try:
+                View.produto_atualizar(id, descricao, preco, estoque, idcategoria)
+                st.success("Produto atualizado com sucesso!")
+                time.sleep(2)
+                st.rerun()
+            except Exception as erro:
+                st.error(erro)
     def excluir():
         Produtos = View.produto_listar()
         if len(Produtos) == 0: st.write("Nenhum Produto registrada")

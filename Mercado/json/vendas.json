@@ -1,89 +1,16 @@
 [
     {
         "id": 1,
-        "data": "2025-12-12T11:00:04.755699",
-        "carrinho": [],
-        "total": 56.628,
-        "idcliente": 2,
-        "nome_cliente": "Henze"
-    },
-    {
-        "id": 2,
-        "data": "2025-12-12T12:18:02.460446",
-        "carrinho": [],
-        "total": 26.664,
-        "idcliente": 2,
-        "nome_cliente": "Henze"
-    },
-    {
-        "id": 3,
-        "data": "2025-12-12T12:47:47.563771",
-        "carrinho": [],
+        "data": "2025-12-14T20:26:44.144953",
+        "carrinho": [
+            {
+                "idproduto": 4,
+                "descricao_produto": "The Witcher 3",
+                "qtd": 1,
+                "preco": 21.5622
+            }
+        ],
         "total": 21.5622,
-        "idcliente": 2,
-        "nome_cliente": "Henze"
-    },
-    {
-        "id": 4,
-        "data": "2025-12-12T13:09:13.823885",
-        "carrinho": [],
-        "total": 9.1476,
-        "idcliente": 2,
-        "nome_cliente": "Henze"
-    },
-    {
-        "id": 5,
-        "data": "2025-12-12T13:13:15.793634",
-        "carrinho": [],
-        "total": 17.24976,
-        "idcliente": 2,
-        "nome_cliente": "Henze"
-    },
-    {
-        "id": 6,
-        "data": "2025-12-12T13:16:19.078469",
-        "carrinho": [],
-        "total": 21.5622,
-        "idcliente": 2,
-        "nome_cliente": "Henze"
-    },
-    {
-        "id": 7,
-        "data": "2025-12-12T13:18:21.346557",
-        "carrinho": [],
-        "total": 9.1476,
-        "idcliente": 2,
-        "nome_cliente": "Henze"
-    },
-    {
-        "id": 8,
-        "data": "2025-12-12T13:20:16.496887",
-        "carrinho": [],
-        "total": 7.1874,
-        "idcliente": 2,
-        "nome_cliente": "Henze"
-    },
-    {
-        "id": 9,
-        "data": "2025-12-12T13:22:18.297204",
-        "carrinho": [],
-        "total": 17.24976,
-        "idcliente": 2,
-        "nome_cliente": "Henze"
-    },
-    {
-        "id": 10,
-        "data": "2025-12-12T13:24:17.567933",
-        "carrinho": [],
-        "total": 21.5622,
-        "idcliente": 2,
-        "nome_cliente": "Henze"
-    },
-    {
-        "id": 11,
-        "data": "2025-12-12T13:26:33.783049",
-        "carrinho": [],
-        "total": 7.1874,
         "idcliente": 2,
         "nome_cliente": "Henze"
     }

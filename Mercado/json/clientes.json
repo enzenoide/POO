@@ -19,5 +19,19 @@
         "email": "admin",
         "fone": "(84)991012814",
         "senha": "12345678"
+    },
+    {
+        "id": 4,
+        "nome": "a",
+        "email": "henze@gmail.com",
+        "fone": "84991012814",
+        "senha": "12345678"
+    },
+    {
+        "id": 5,
+        "nome": "Alan",
+        "email": "alan@gmail.com",
+        "fone": "84999991919",
+        "senha": "12345678"
     }
 ]

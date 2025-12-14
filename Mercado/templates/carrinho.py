@@ -18,24 +18,20 @@ class CarrinhoUI:
         
         for index, produto in enumerate(Produtos):
             produto_id = produto.get_id()
-            estoque_atual = produto.get_estoque()
+            # GARANTE QUE O ESTOQUE É FLOAT
+            estoque_atual = float(produto.get_estoque())
+            
             pode_adicionar = estoque_atual > 0 
             
+            # GARANTE QUE O MIN_VALUE É FLOAT
+            min_valor_input = 1.0 if pode_adicionar else 0.0
             
-            min_valor_input = 1 if pode_adicionar else 0
             col = colunas[index % num_colunas]
             
-            produto_id = produto.get_id()
-            estoque_atual = produto.get_estoque() 
-            
-           
-            pode_adicionar = estoque_atual > 0 
-
             with col:
                 with st.container(border=True): 
                     caminho_imagem = produto.get_url_imagem()
 
-                    
                     if caminho_imagem:
                         img_col1, img_col2, img_col3 = st.columns([1, 4, 1])
                         with img_col2:
@@ -50,30 +46,28 @@ class CarrinhoUI:
                     st.markdown(f"**{produto.get_descricao()}**")
                     st.markdown(f"**R$ {produto.get_preco():.2f}**")
                     
-                    
                     if not pode_adicionar:
                         st.markdown("<div align='center'><font color='red'>ESTOQUE ESGOTADO</font></div>", unsafe_allow_html=True)
                     else:
-                        st.markdown(f"<div align='center'>Estoque: {estoque_atual}</div>", unsafe_allow_html=True)
+                        st.markdown(f"<div align='center'>Estoque: {estoque_atual:.2f}</div>", unsafe_allow_html=True)
 
-                    
+                    # 3. number_input agora usa apenas floats (1.0, 0.0)
                     qtd = st.number_input(
                         "Qtd:", 
-                        
                         min_value=min_valor_input, 
-                        
                         max_value=estoque_atual, 
-                        
                         value=min_valor_input, 
-                        
+                        step=1.0, # Adiciona step=1.0 para manter o tipo consistente
                         disabled=not pode_adicionar, 
                         key=f"qtd_{produto_id}"
                     )
 
-                    
                     if st.button("🛒 Adicionar", key=f"add_{produto_id}", disabled=not pode_adicionar):
+                        # Lógica de adição
                         try:
-                            View.carrinho_inserir(st.session_state["cliente_id"], produto_id, qtd)
+                            # Garante que a quantidade seja convertida para o tipo que a View espera (provavelmente float ou int)
+                            qtd_para_inserir = int(qtd) if qtd == int(qtd) else qtd 
+                            View.carrinho_inserir(st.session_state["cliente_id"], produto_id, qtd_para_inserir)
                             st.success(f"'{produto.get_descricao()}' adicionado(a) com sucesso!")
                             time.sleep(1)
                             st.rerun()

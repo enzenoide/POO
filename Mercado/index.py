@@ -9,6 +9,8 @@ from view import View
 from templates.listarprodutos import ListarProdutosUI
 from templates.carrinho import CarrinhoUI
 from templates.listarcompras import ListarComprasUI
+from templates.listarvendas import ListarvendasUI
+from templates.relatorio import RelatorioVendasUI
 class IndexUI:
     def menu_visitante():
         op = st.sidebar.selectbox("Menu", [
@@ -22,12 +24,16 @@ class IndexUI:
                                   "Cadastro de Categorias", 
                                    "Cadastro de Clientes",
                                    "Cadastro de Produtos",
-                                   "Reajustar Produtos"])
+                                   "Reajustar Produtos",
+                                   "Listar Vendas",
+                                   "Relatório de Vendas"])
        # st.session_state["opcao"].append(op) 
         if op == "Cadastro de Categorias": ManterCategoriaUI.main()
         if op == "Cadastro de Clientes": ManterClienteUI.main()
         if op == "Cadastro de Produtos": ManterProdutoUI.main()
         if op == "Reajustar Produtos": ReajustarProdutoUI.main()
+        if op == "Listar Vendas": ListarvendasUI.main()
+        if op == "Relatório de Vendas": RelatorioVendasUI.main()
     def menu_cliente():
         op = st.sidebar.selectbox("Menu", [
                                   "Listar produtos", 

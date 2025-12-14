@@ -102,7 +102,7 @@ class VendaitemDAO:
 
             
             descricao = produto.get_descricao() if produto else "Produto não encontrado"
-            # ADICIONE ESTE LOG CRÍTICO
+            
             print(f"VendaitemDAO.salvar: Gravando item {v.get_idproduto()}. Descrição: '{descricao}'")
            
             dados.append({
@@ -122,5 +122,11 @@ class VendaitemDAO:
         itens_venda = []
         for obj in cls.objetos:
             if obj.get_idvenda() == idvenda:
-                itens_venda.append(obj.to_json()) 
+                item_dic = obj.to_json()
+                produto = ProdutoDAO.listar_id(obj.get_idproduto())
+                descricao = produto.get_descricao() if produto else "Produto não encontrado"
+                url_imagem = produto.get_url_imagem() if produto else "assets/nao_encontrado.png"
+                item_dic["descricao_produto"] = descricao
+                item_dic["url_imagem"] = url_imagem
+                itens_venda.append(item_dic) 
         return itens_venda

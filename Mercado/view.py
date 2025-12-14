@@ -39,6 +39,9 @@ class View:
             raise e
     def cliente_inserir(nome,email,fone,senha):
         id = 0
+        for obj in View.cliente_listar():
+            if obj.get_email() == email: raise ValueError("Já existe alguém com esse email")
+            elif obj.get_fone() == fone: raise ValueError("Já existe algúem com esse telefone")
         c = Cliente(id,nome,email,fone,senha)
         ClienteDAO.inserir(c)
 
@@ -50,10 +53,14 @@ class View:
 
     def cliente_atualizar(id,nome,email,fone,senha):
         c = Cliente(id,nome,email,fone,senha)
+        for obj in View.cliente_listar():
+            if obj.get_email() == email: raise ValueError("Já existe alguém com esse email")
+            elif obj.get_fone() == fone: raise ValueError("Já existe algúem com esse telefone")
         ClienteDAO.atualizar(c)
 
     def cliente_excluir(id):
-        input
+        if id == 1:
+            raise ValueError("Admin não pode ser excluido")
         ClienteDAO.excluir(id)
 
     def cliente_listar_compras(idcliente):
@@ -82,31 +89,60 @@ class View:
             
         return lista_vendas_detalhadas
     def cliente_listar_vendas():
+      
         vendas = VendaDAO.listar()
         itens = VendaitemDAO.listar()
-        encontrou = False
+        
+        
+        vendas_formatadas = []
 
+        
+        itens_por_venda = {}
+        for i in itens:
+            id_venda = i.get_idvenda()
+            if id_venda not in itens_por_venda:
+                itens_por_venda[id_venda] = []
+            itens_por_venda[id_venda].append(i)
+
+        
         for v in vendas:
+            venda_id = v.get_id()
+            
+            
             cliente = ClienteDAO.listar_id(v.get_idcliente())
             nome_cliente = cliente.get_nome() if cliente else "Cliente não encontrado"
 
-            print(f"\n🧾 Venda ID: {v.get_id()} | Cliente: {nome_cliente} | Total: R${v.get_total():.2f} | Data: {v.get_data()}")
+            
+            carrinho = []
+            
+           
+            itens_relacionados = itens_por_venda.get(venda_id, [])
 
-            encontrou_itens = False
-            for i in itens:
-                if i.get_idvenda() == v.get_id():
-                    produto = ProdutoDAO.listar_id(i.get_idproduto())
-                    nome_produto = produto.get_descricao() if produto else "Produto não encontrado"
-                    print(f"  - Produto: {nome_produto} | Quantidade: {i.get_qtd()} | Preço unitário: R${i.get_preco():.2f}")
-                    encontrou_itens = True
+            for item_obj in itens_relacionados:
+                produto = ProdutoDAO.listar_id(item_obj.get_idproduto())
+                
+                nome_produto = produto.get_descricao() if produto else "Produto não encontrado"
+                url_img = produto.get_url_imagem() if produto and hasattr(produto, 'get_url_imagem') else "assets/placeholder.png"
 
-            if not encontrou_itens:
-                print("  (Nenhum item encontrado para esta venda)")
+                carrinho.append({
+                    "descricao_produto": nome_produto,
+                    "qtd": item_obj.get_qtd(),
+                    "preco": item_obj.get_preco(),
+                    "url_imagem": url_img,
+                    "id_produto": item_obj.get_idproduto() 
+                })
 
-            encontrou = True
+            
+            vendas_formatadas.append({
+                "id": venda_id,
+                "total": v.get_total(),
+                "data": v.get_data(),  
+                "nome_cliente": nome_cliente,
+                "carrinho": carrinho
+            })
 
-        if not encontrou:
-            print("❌ Nenhuma venda registrada.")
+        # 3. Retornar a lista formatada
+        return vendas_formatadas
 
 
     def categoria_inserir(desc):
@@ -133,7 +169,19 @@ class View:
         CategoriaDAO.excluir(c)
 
     def produto_inserir(desc, preco, estoque, idcategoria):
-        c = Produto(None, desc, preco, estoque, idcategoria)
+        if not idcategoria or str(idcategoria).strip() == "":
+            raise ValueError("O ID da categoria não pode ser vazio.")
+    
+       
+        categorias_existentes = View.categoria_listar() 
+        ids_validos = {str(c.get_id()) for c in categorias_existentes}
+
+        idcategoria_str = str(idcategoria) 
+
+        if idcategoria_str not in ids_validos:
+            raise ValueError("ID da Categoria inexistente. Por favor, insira um ID válido.")
+
+        c = Produto(None, desc, preco, estoque, idcategoria_str)
         ProdutoDAO.inserir(c)
 
     def produto_listar():
@@ -147,7 +195,7 @@ class View:
         ProdutoDAO.atualizar(c)
 
     def produto_excluir(id):
-        c = Produto(id, "", 1, 0, 0)
+        c = Produto(id, ".", 1, 0, 0)
         ProdutoDAO.excluir(c)
 
     def produto_reajustar(percentual):
@@ -198,65 +246,54 @@ class View:
     @staticmethod
     def carrinho_comprar(idcliente):
         from models.carrinho import CarrinhoDAO
-        from models.cliente import Venda, VendaDAO # Assumindo que Venda e VendaDAO estão aqui
-        from models.vendaItem import VendaItem, VendaitemDAO # Importar VendaItem e VendaitemDAO
+        from models.cliente import Venda, VendaDAO 
+        from models.vendaItem import VendaItem, VendaitemDAO 
         from datetime import datetime
         from models.produto import ProdutoDAO
 
-        carrinho = CarrinhoDAO.listar(idcliente)
+        carrinho = CarrinhoDAO.listar(idcliente) 
 
         if not carrinho:
             print("Carrinho vazio! Nada para comprar.")
             return False
 
         total_compra = 0
-        itens_para_venda = [] 
-
+        itens_para_venda_data = [] 
         
+       
         for item_carrinho in carrinho:
             id_produto = item_carrinho.get_idproduto()
             qtd = item_carrinho.get_qtd()
             produto = ProdutoDAO.listar_id(id_produto)
             
-            # IGNORA ITEM INVÁLIDO (SOLUÇÃO PARA O ID 10)
-            if produto is None:
-                # O produto será ignorado na compra, mas permanece no carrinho até a limpeza final
-                print(f"AVISO: Produto ID {id_produto} não encontrado. Item ignorado na compra.")
-                continue 
-                
-            #INTERROMPE COMPRA POR ESTOQUE (ISSO AINDA É UM ERRO CRÍTICO DE NEGÓCIO)
-            if produto.get_estoque() < qtd:
-                print(f"Estoque insuficiente para o produto '{produto.get_descricao()}'. Operação cancelada.")
+            if produto is None or produto.get_estoque() < qtd:
                 return False 
 
             preco_unitario = float(produto.get_preco())
             total_compra += preco_unitario * qtd
             
-            itens_para_venda.append({
+            itens_para_venda_data.append({
                 'produto': produto, 
                 'qtd': qtd, 
                 'preco': preco_unitario
             })
         
-        
-        if not itens_para_venda:
+        if not itens_para_venda_data:
             print("Nenhum item válido para compra no carrinho.")
             return False
 
         
-
-        #Passa o carrinho vazio pra evitar o NoneType
-        venda = Venda(id=0, data=datetime.now(), carrinho=[], total=total_compra, idcliente=idcliente)
+        venda = Venda(id=0, data=datetime.now(), carrinho=carrinho, total=total_compra, idcliente=idcliente)
         
         VendaDAO.inserir(venda)
         id_venda_gerado = venda.get_id() 
 
         if not id_venda_gerado:
-             print("ERRO CRÍTICO: Falha ao obter o ID da Venda após a inserção.")
-             return False # A transação falhou
+                print("ERRO CRÍTICO: Falha ao obter o ID da Venda após a inserção.")
+                return False 
 
-        #REGISTRAR ITENS E ATUALIZAR ESTOQUE
-        for item_data in itens_para_venda:
+        # SALVAMENTO DOS ITENS NO VENDAITEMDAO E ATUALIZAÇÃO DO ESTOQUE (Mantido)
+        for item_data in itens_para_venda_data:
             produto = item_data['produto']
             qtd = item_data['qtd']
             preco = item_data['preco']
@@ -271,47 +308,66 @@ class View:
             )
             VendaitemDAO.inserir(vendaitem)
 
-            # Atualiza o estoque
+            
             produto.set_estoque(produto.get_estoque() - qtd)
             ProdutoDAO.atualizar(produto)
 
-        #LIMPAR O CARRINHO INTEIRO (Remove itens comprados + o ID 10 inválido)
+        
         CarrinhoDAO.limpar(idcliente)
 
         print(f"Compra finalizada com sucesso. Venda ID: {id_venda_gerado}")
         return True
     @classmethod
-    def lucro(cls):
+    def relatorio_consumo(cls):
+        #
         produtos = ProdutoDAO.listar()
         vendas = VendaDAO.listar()
-
-        total_vendido = 0
-        qtd_vendida = 0
-
-       
+        
+        total_vendido = 0       
+        qtd_vendida = 0         
+        
+        # Lista de Vendas está OK, entramos no loop
         for venda in vendas:
-            for item in venda.carrinho:
-                produto = ProdutoDAO.listar_id(item.get_idproduto())
-                if produto:
-                    total_vendido += float(produto.get_preco()) * float(item.get_qtd())
-                    qtd_vendida += item.get_qtd()
-
-    
-        total_estoque = sum(float(p.get_preco()) * float(p.get_estoque()) for p in produtos)
-
-        lucro = total_vendido - total_estoque
-
-        print("\n📊 ======= RELATÓRIO FINANCEIRO =======")
-        print(f"💼 Valor total do estoque atual : R${total_estoque:.2f}")
-        print(f"🛒 Quantidade total vendida     : {qtd_vendida}")
-        print(f"💰 Total arrecadado com vendas  : R${total_vendido:.2f}")
-        print("--------------------------------------")
-
-        if lucro >= 0:
-            print(f"🟢 Situação: LUCRO de R${lucro:.2f}")
-        else:
-            print(f"🔴 Situação: PREJUÍZO de R${lucro:.2f}")
-
-        print("=======================================\n")
-
-        return lucro
+            
+            #ACESSO AO CARRINHO (Contém Objetos Carrinho)
+            # Assumimos que o VendaDAO.listar() carrega o atributo 'carrinho' com os itens.
+            itens_da_venda = venda.carrinho
+            
+            if not itens_da_venda:
+                continue
+                
+           
+            for item in itens_da_venda:
+                
+                # Obtém ID e Quantidade do Objeto Carrinho
+                id_produto = item.get_idproduto() 
+                quantidade = float(item.get_qtd())
+                
+                if id_produto is not None:
+                    # Busca o produto atual para obter preço e descrição (Se o produto ainda existe)
+                    produto_vendido = ProdutoDAO.listar_id(id_produto)
+                    
+                    if produto_vendido:
+                        
+                        # Usa o preço atual de venda do produto no estoque
+                        preco_venda_item = float(produto_vendido.get_preco()) 
+                        
+                        total_vendido += preco_venda_item * quantidade
+                        qtd_vendida += quantidade
+        
+        
+        total_estoque_valor_venda = sum(float(p.get_preco()) * float(p.get_estoque()) for p in produtos)
+        
+        
+       
+        print("\n📊 ======= RELATÓRIO DE CONSUMO/VENDAS =======")
+        print(f"💰 Total arrecadado com vendas : R${total_vendido:.2f}")
+        print(f"🛒 Quantidade total de itens vendidos : {qtd_vendida:.2f}")
+        print(f"💼 Valor total do estoque atual (P.V.) : R${total_estoque_valor_venda:.2f}")
+        print("=============================================\n")
+        
+        return {
+            'total_vendido': total_vendido,
+            'qtd_vendida': qtd_vendida,
+            'estoque_valor_venda': total_estoque_valor_venda,
+        }

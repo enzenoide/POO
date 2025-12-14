@@ -12,7 +12,6 @@ class Categoria:
         return self.__descricao
 
     def set_id(self, id):
-        if id <= 0: raise ValueError("ID não pode ser vazio")
         self.__id = id
 
     def set_descricao(self, descricao):

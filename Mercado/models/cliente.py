@@ -229,14 +229,19 @@ class VendaDAO:
 
             itens_carrinho = []
             for item in v.carrinho:
-               
+                
                 produto = ProdutoDAO.listar_id(item.get_idproduto())
                 descricao_produto = produto.get_descricao() if produto else "Produto não encontrado"
+
+                
+               
+                preco_venda = produto.get_preco() if produto else 0.0 
 
                 itens_carrinho.append({
                     "idproduto": item.get_idproduto(),
                     "descricao_produto": descricao_produto,
-                    "qtd": item.get_qtd()
+                    "qtd": item.get_qtd(),
+                    "preco": preco_venda  
                 })
 
             dados.append({
@@ -254,13 +259,12 @@ class VendaDAO:
     @classmethod
     def listar_por_cliente(cls, idcliente):
         """Lista todas as vendas de um cliente específico."""
-        cls.abrir() # Garante que os objetos sejam carregados do JSON
+        cls.abrir() 
         
         vendas_cliente = []
         for obj in cls.objetos:
-            # Compara o ID do cliente da venda com o ID desejado
             if obj.get_idcliente() == idcliente:
                 # Retorna o dicionário serializado da venda (com dados básicos)
                 vendas_cliente.append(obj.to_json()) 
                 
-        return vendas_cliente
+        return vendas_cliente       
