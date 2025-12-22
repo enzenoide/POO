@@ -1,11 +1,11 @@
 import json
 from models.produto import ProdutoDAO, Produto
+from models.dao import DAO
 
 class Carrinho:
     def __init__(self, idproduto, qtd):
         self.set_idproduto(idproduto)
         self.set_qtd(qtd)
-
     def get_idproduto(self):
         return self.__idproduto
     
@@ -33,9 +33,7 @@ class Carrinho:
         return Carrinho(dic["idproduto"], dic["qtd"])
 
 
-class CarrinhoDAO:
-    objetos = []  
-
+class CarrinhoDAO(DAO):
     @classmethod
     def abrir(cls, idcliente):
         filename = f"json/carrinho_{idcliente}.json"
@@ -56,50 +54,6 @@ class CarrinhoDAO:
                 "idproduto": c.get_idproduto(),
                 "qtd": c.get_qtd()
             } for c in cls.objetos], arquivo, indent=4)
-
-    @classmethod
-    def inserir(cls, idcliente, obj):
-        cls.abrir(idcliente)
-
-        existente = cls.listar_id(idcliente, obj.get_idproduto())
-        if existente:
-            existente.set_qtd(existente.get_qtd() + obj.get_qtd())
-        else:
-            cls.objetos.append(obj)
-
-        cls.salvar(idcliente)
-
-    @classmethod
-    def listar(cls, idcliente):
-        cls.abrir(idcliente)
-        return cls.objetos
-
-    @classmethod
-    def listar_id(cls, idcliente, idproduto):
-        cls.abrir(idcliente)
-        for obj in cls.objetos:
-            if obj.get_idproduto() == idproduto:
-                return obj
-        return None    
-
-    @classmethod
-    def atualizar(cls, idcliente, obj):
-        cls.abrir(idcliente)
-
-        aux = cls.listar_id(idcliente, obj.get_idproduto())
-        if aux is not None:
-            cls.objetos.remove(aux)
-            cls.objetos.append(obj)
-            cls.salvar(idcliente)
-
-    @classmethod
-    def excluir(cls, idcliente, idproduto):
-        cls.abrir(idcliente)
-        aux = cls.listar_id(idcliente, idproduto)
-        if aux is not None:
-            cls.objetos.remove(aux)
-            cls.salvar(idcliente)
-
     @classmethod
     def listar_detalhado(cls, idcliente):
         cls.abrir(idcliente)
