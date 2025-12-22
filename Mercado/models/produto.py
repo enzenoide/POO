@@ -1,5 +1,5 @@
 import json
-
+from models.dao import DAO
 class Produto:
     def __init__(self, id, descricao, preco, estoque, idcategoria,url_imagem=None):
         self.set_id(id)
@@ -65,57 +65,7 @@ class Produto:
     def from_json(dic):
         return Produto(dic["id"], dic["descricao"], dic["preco"], dic["estoque"], dic["idcategoria"],dic.get("url_imagem", None))
 
-class ProdutoDAO:
-    objetos = [] 
-
-    @classmethod
-    def inserir(cls, obj):
-        cls.abrir()
-        max_id = 0
-        for aux in cls.objetos:
-            if aux.get_id() > max_id: 
-                max_id = aux.get_id()
-        obj.set_id(max_id + 1)
-        cls.objetos.append(obj)
-        cls.salvar()
-
-    @classmethod
-    def listar(cls):
-        cls.abrir()
-        return cls.objetos
-
-    @classmethod
-    def listar_id(cls, id):
-        cls.abrir()
-        id_int = int(id)
-        
-   
-        print(f"ProdutoDAO: Buscando ID {id_int}...")
-        
-        for obj in cls.objetos:
-            if obj.get_id() == id_int:
-                
-                print(f"ProdutoDAO: SUCESSO! Produto {id_int} encontrado.")
-                return obj
-        
-
-        print(f"ProdutoDAO: FALHA! Produto ID {id_int} não encontrado na lista atual.")
-        return None
-    @classmethod
-    def atualizar(cls, obj):
-        aux = cls.listar_id(obj.get_id())
-        if aux is not None:
-            cls.objetos.remove(aux)
-            cls.objetos.append(obj)
-            cls.salvar()
-
-    @classmethod
-    def excluir(cls, obj):
-        aux = cls.listar_id(obj.get_id())
-        if aux is not None:
-            cls.objetos.remove(aux)
-            cls.salvar()
-
+class ProdutoDAO(DAO):
     @classmethod
     def abrir(cls):
         cls.objetos = []
