@@ -2,7 +2,7 @@ from models.cliente import Cliente,ClienteDAO
 from models.categoria import Categoria, CategoriaDAO
 from models.produto import Produto,ProdutoDAO
 from models.carrinho import Carrinho,CarrinhoDAO
-from models.cliente import Venda,VendaDAO
+from models.venda import Venda,VendaDAO
 from models.vendaItem import VendaItem,VendaitemDAO
 from datetime import datetime
 import json

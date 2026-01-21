@@ -1,13 +1,5 @@
 [
     {
-        "id": 4,
-        "descricao": "The Witcher 3",
-        "preco": 21.5622,
-        "estoque": 125.0,
-        "idcategoria": 4,
-        "url_imagem": "assets/WITCHER.png"
-    },
-    {
         "id": 5,
         "descricao": "Minecraft",
         "preco": 9.1476,
@@ -30,5 +22,21 @@
         "estoque": 9.0,
         "idcategoria": 3,
         "url_imagem": "assets/GTA.png"
+    },
+    {
+        "id": 6,
+        "descricao": "lupa",
+        "preco": 0.01,
+        "estoque": 1.0,
+        "idcategoria": 3,
+        "url_imagem": null
+    },
+    {
+        "id": 4,
+        "descricao": "The Witcher 3",
+        "preco": 21.5622,
+        "estoque": 125.0,
+        "idcategoria": 4,
+        "url_imagem": null
     }
 ]

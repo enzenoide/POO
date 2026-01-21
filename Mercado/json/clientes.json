@@ -33,5 +33,12 @@
         "email": "alan@gmail.com",
         "fone": "84999991919",
         "senha": "12345678"
+    },
+    {
+        "id": 6,
+        "nome": "arthur",
+        "email": "arthur@gmail.com",
+        "fone": "84991012816",
+        "senha": "12345678"
     }
 ]
