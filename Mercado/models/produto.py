@@ -1,16 +1,16 @@
 import json
 from models.dao import DAO
 class Produto:
-    def __init__(self, id, descricao, preco, estoque, idcategoria,url_imagem=None):
+    def __init__(self, id, descricao, preco, estoque, idcategoria,imagem):
         self.set_id(id)
         self.set_descricao(descricao)
         self.set_preco(preco)
         self.set_estoque(estoque)
         self.set_idcategoria(idcategoria)
-        self.set_url_imagem(url_imagem)
+        self.set_imagem(imagem)
 
-    def get_url_imagem(self):
-        return self.__url_imagem
+    def get_imagem(self):
+        return self.__imagem
     def get_id(self):
         return self.__id
     def get_descricao(self):
@@ -52,18 +52,18 @@ class Produto:
         if idcategoria is None or str(idcategoria).strip() == "":
             raise ValueError("ID da Categoria não pode ser vazio.")
         self.__idcategoria = int(idcategoria)
-    def set_url_imagem(self,url_imagem):
-        self.__url_imagem = url_imagem
+    def set_imagem(self,imagem):
+        self.__imagem = imagem
 
     def __str__(self):
         return f"Produto ID: {self.get_id()} | Descrição: {self.get_descricao()} | Preço: R${self.get_preco():.2f} | Estoque: {self.get_estoque()} | Categoria ID: {self.get_idcategoria()}"
     
     def to_json(self):
-        return { "id" : self.get_id(), "descricao" : self.get_descricao(), "preco" : self.get_preco(), "estoque" : self.get_estoque(), "idcategoria" : self.get_idcategoria(), "url_imagem": self.get_url_imagem() }
+        return { "id" : self.get_id(), "descricao" : self.get_descricao(), "preco" : self.get_preco(), "estoque" : self.get_estoque(), "idcategoria" : self.get_idcategoria(), "imagem": self.get_imagem() }
 
     @staticmethod
     def from_json(dic):
-        return Produto(dic["id"], dic["descricao"], dic["preco"], dic["estoque"], dic["idcategoria"],dic.get("url_imagem", None))
+        return Produto(dic["id"], dic["descricao"], dic["preco"], dic["estoque"], dic["idcategoria"],dic.get("imagem"))
 
 class ProdutoDAO(DAO):
     @classmethod
@@ -89,7 +89,7 @@ class ProdutoDAO(DAO):
                 "preco": p.get_preco(),
                 "estoque": p.get_estoque(),
                 "idcategoria": p.get_idcategoria(),
-                "url_imagem": p.get_url_imagem()
+                "imagem": p.get_imagem()
             } for p in cls.objetos], arquivo, indent=4)
 
     @classmethod

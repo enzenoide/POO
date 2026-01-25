@@ -71,6 +71,20 @@ class CarrinhoDAO(DAO):
                 })
         return lista_final
     @classmethod
+    def inserir_carrinho(cls, idcliente, obj):
+        cls.abrir(idcliente)
+
+        for item in cls.objetos:
+            if item.get_idproduto() == obj.get_idproduto:
+                nova_qtd = item.get_qtd() + obj.get_qtd()
+
+                item.set_qtd(nova_qtd)
+                cls.salvar(idcliente)
+                return
+        cls.objetos.append(obj)
+        cls.salvar(idcliente)
+
+    @classmethod
     def limpar(cls, idcliente):
         cls.abrir(idcliente)  
         cls.objetos = []      

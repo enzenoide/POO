@@ -30,7 +30,7 @@ class CarrinhoUI:
             
             with col:
                 with st.container(border=True): 
-                    caminho_imagem = produto.get_url_imagem()
+                    caminho_imagem = produto.get_imagem()
 
                     if caminho_imagem:
                         img_col1, img_col2, img_col3 = st.columns([1, 4, 1])
@@ -67,7 +67,9 @@ class CarrinhoUI:
                         try:
                             # Garante que a quantidade seja convertida para o tipo que a View espera (provavelmente float ou int)
                             qtd_para_inserir = int(qtd) if qtd == int(qtd) else qtd 
+                            
                             View.carrinho_inserir(st.session_state["cliente_id"], produto_id, qtd_para_inserir)
+                            
                             st.success(f"'{produto.get_descricao()}' adicionado(a) com sucesso!")
                             time.sleep(1)
                             st.rerun()
@@ -100,7 +102,7 @@ class CarrinhoUI:
             preco = item.get('preco')
             quantidade = item.get('quantidade')
             total_item = item.get('total')
-            caminho_imagem = View.produto_listar_id(id_produto).get_url_imagem() 
+            caminho_imagem = View.produto_listar_id(id_produto).get_imagem() 
             
             with col:
                 with st.container(border=True): 

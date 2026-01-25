@@ -1,42 +1,34 @@
 [
     {
-        "id": 5,
-        "descricao": "Minecraft",
-        "preco": 9.1476,
-        "estoque": 117.0,
-        "idcategoria": 2,
-        "url_imagem": "assets/MINE.png"
-    },
-    {
-        "id": 2,
-        "descricao": "Luigis Mansion",
-        "preco": 7.1874,
-        "estoque": 118.0,
-        "idcategoria": 5,
-        "url_imagem": "assets/luigis.jpg"
-    },
-    {
-        "id": 1,
-        "descricao": "GTA",
-        "preco": 17.24976,
-        "estoque": 9.0,
-        "idcategoria": 3,
-        "url_imagem": "assets/GTA.png"
-    },
-    {
-        "id": 6,
-        "descricao": "lupa",
-        "preco": 0.01,
-        "estoque": 1.0,
-        "idcategoria": 3,
-        "url_imagem": null
+        "id": 3,
+        "descricao": "Luigis mansion",
+        "preco": 22.0,
+        "estoque": 55.0,
+        "idcategoria": 4,
+        "imagem": "assets/Luigis_mansion.png"
     },
     {
         "id": 4,
+        "descricao": "GTA 5",
+        "preco": 109.0,
+        "estoque": 10.0,
+        "idcategoria": 5,
+        "imagem": "assets/GTA_5.png"
+    },
+    {
+        "id": 1,
         "descricao": "The Witcher 3",
-        "preco": 21.5622,
-        "estoque": 125.0,
-        "idcategoria": 4,
-        "url_imagem": null
+        "preco": 20.0,
+        "estoque": 28.0,
+        "idcategoria": 2,
+        "imagem": "assets/The_Witcher_3.png"
+    },
+    {
+        "id": 2,
+        "descricao": "Minecraft",
+        "preco": 32.0,
+        "estoque": 17.0,
+        "idcategoria": 3,
+        "imagem": "assets/Minecraft.png"
     }
 ]

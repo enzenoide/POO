@@ -168,7 +168,7 @@ class View:
         c = Categoria(id,desc)
         CategoriaDAO.excluir(c)
 
-    def produto_inserir(desc, preco, estoque, idcategoria):
+    def produto_inserir(desc, preco, estoque, idcategoria,imagem):
         if not idcategoria or str(idcategoria).strip() == "":
             raise ValueError("O ID da categoria não pode ser vazio.")
     
@@ -181,7 +181,7 @@ class View:
         if idcategoria_str not in ids_validos:
             raise ValueError("ID da Categoria inexistente. Por favor, insira um ID válido.")
 
-        c = Produto(None, desc, preco, estoque, idcategoria_str)
+        c = Produto(None, desc, preco, estoque, idcategoria_str,imagem)
         ProdutoDAO.inserir(c)
 
     def produto_listar():
@@ -190,8 +190,8 @@ class View:
     def produto_listar_id(id):
         return ProdutoDAO.listar_id(id)
 
-    def produto_atualizar(id, desc, preco, estoque, idcategoria):
-        c = Produto(id, desc, preco, estoque, idcategoria)
+    def produto_atualizar(id, desc, preco, estoque, idcategoria,imagem):
+        c = Produto(id, desc, preco, estoque, idcategoria,imagem)
         ProdutoDAO.atualizar(c)
 
     def produto_excluir(id):
@@ -216,19 +216,25 @@ class View:
         elif qtd == "":
             raise ValueError("Quantidade não pode estar vazio")
         try:
+            
             produto = View.produto_listar_id(idproduto)
+            
             if produto is None:
                 raise ValueError(f"O produto com ID:{idproduto} não foi encontrado no sistema")
             if produto.get_estoque() < int(qtd):
                 raise ValueError(f"estoque insuficiente para {produto.get_descricao()}")
+
             item = Carrinho(idproduto, qtd)
+            
+            
         except ValueError as e:
             mensagem = "literal for int() with base 10"
             if mensagem in str(e):
                 raise ValueError("O ID e a Quantidade precisam ser números")
             raise e
-            
-        CarrinhoDAO.inserir(idcliente, item)
+        print("bossetao")
+        CarrinhoDAO.inserir_carrinho(idcliente, item)
+        
         
 
         
@@ -246,73 +252,81 @@ class View:
     @staticmethod
     def carrinho_comprar(idcliente):
         from models.carrinho import CarrinhoDAO
-        from models.cliente import Venda, VendaDAO 
-        from models.vendaItem import VendaItem, VendaitemDAO 
-        from datetime import datetime
+        from models.venda import Venda, VendaDAO
+        from models.vendaItem import VendaItem, VendaitemDAO
         from models.produto import ProdutoDAO
+        from datetime import datetime
 
-        carrinho = CarrinhoDAO.listar(idcliente) 
+        # 1️⃣ Abre o carrinho REAL (objetos)
+        CarrinhoDAO.abrir(idcliente)
+        itens_carrinho = CarrinhoDAO.objetos
 
-        if not carrinho:
+        if not itens_carrinho:
             print("Carrinho vazio! Nada para comprar.")
             return False
 
         total_compra = 0
-        itens_para_venda_data = [] 
-        
-       
-        for item_carrinho in carrinho:
-            id_produto = item_carrinho.get_idproduto()
-            qtd = item_carrinho.get_qtd()
-            produto = ProdutoDAO.listar_id(id_produto)
-            
-            if produto is None or produto.get_estoque() < qtd:
-                return False 
+        itens_para_venda = []
+
+        # 2️⃣ Validação + cálculo
+        for item in itens_carrinho:
+            produto = ProdutoDAO.listar_id(item.get_idproduto())
+
+            if produto is None:
+                print("Produto não encontrado.")
+                return False
+
+            if produto.get_estoque() < item.get_qtd():
+                print("Estoque insuficiente.")
+                return False
 
             preco_unitario = float(produto.get_preco())
-            total_compra += preco_unitario * qtd
-            
-            itens_para_venda_data.append({
-                'produto': produto, 
-                'qtd': qtd, 
-                'preco': preco_unitario
+            subtotal = preco_unitario * item.get_qtd()
+            total_compra += subtotal
+
+            itens_para_venda.append({
+                "produto": produto,
+                "qtd": item.get_qtd(),
+                "preco": preco_unitario
             })
-        
-        if not itens_para_venda_data:
-            print("Nenhum item válido para compra no carrinho.")
+
+        if not itens_para_venda:
+            print("Nenhum item válido para compra.")
             return False
 
-        
-        venda = Venda(id=0, data=datetime.now(), carrinho=carrinho, total=total_compra, idcliente=idcliente)
-        
+        # 3️⃣ Cria a venda
+        venda = Venda(
+            id=0,
+            data=datetime.now(),
+            carrinho = itens_carrinho,
+            total=total_compra,
+            idcliente=idcliente
+        )
+
         VendaDAO.inserir(venda)
-        id_venda_gerado = venda.get_id() 
+        id_venda_gerado = venda.get_id()
 
         if not id_venda_gerado:
-                print("ERRO CRÍTICO: Falha ao obter o ID da Venda após a inserção.")
-                return False 
+            print("ERRO CRÍTICO: Falha ao obter o ID da Venda.")
+            return False
 
-        # SALVAMENTO DOS ITENS NO VENDAITEMDAO E ATUALIZAÇÃO DO ESTOQUE (Mantido)
-        for item_data in itens_para_venda_data:
-            produto = item_data['produto']
-            qtd = item_data['qtd']
-            preco = item_data['preco']
-            
-            # Cria e insere VendaItem
+        # 4️⃣ Cria os itens da venda + atualiza estoque
+        for item in itens_para_venda:
+            produto = item["produto"]
+
             vendaitem = VendaItem(
                 id=None,
-                qtd=qtd,
-                preco=preco,
-                idvenda=id_venda_gerado, 
+                qtd=item["qtd"],
+                preco=item["preco"],
+                idvenda=id_venda_gerado,
                 idproduto=produto.get_id()
             )
             VendaitemDAO.inserir(vendaitem)
 
-            
-            produto.set_estoque(produto.get_estoque() - qtd)
+            produto.set_estoque(produto.get_estoque() - item["qtd"])
             ProdutoDAO.atualizar(produto)
 
-        
+        # 5️⃣ Limpa o carrinho
         CarrinhoDAO.limpar(idcliente)
 
         print(f"Compra finalizada com sucesso. Venda ID: {id_venda_gerado}")

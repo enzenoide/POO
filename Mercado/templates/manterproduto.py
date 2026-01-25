@@ -2,6 +2,7 @@ import streamlit as st
 from view import View
 import pandas as pd
 import time
+import os
 
 class ManterProdutoUI:
     def main():
@@ -23,20 +24,33 @@ class ManterProdutoUI:
         descricao = st.text_input("Me informe o nome do produto: ")
         preco = st.number_input("Me informe o preço do produto: ", value=0.01, min_value=0.01)
         estoque = st.number_input("Me informe a quantidade do produto em estoque: ", value=1.0, min_value=1.0)
-            
-            
         idcategoria = st.text_input("Me informe o ID da categoria: ", value="1")
-        
-        if st.button("Inserir"):     
+
+        imagem = st.file_uploader(
+            "Imagem do produto",
+            type=["png", "jpg", "jpeg"]
+        )
+
+        if st.button("Inserir"):
             try:
-                View.produto_inserir(descricao, preco, estoque, idcategoria)
+                if imagem is None:
+                    st.error("Selecione uma imagem do produto.")
+                    return
+
+                os.makedirs("assets/", exist_ok=True)
+
+                nome_arquivo = f"{descricao.replace(' ', '_')}.png"
+                caminho_imagem = f"assets/{nome_arquivo}"
+
+                with open(caminho_imagem, "wb") as f:
+                    f.write(imagem.getbuffer())
+
+                View.produto_inserir(descricao, preco, estoque, idcategoria, caminho_imagem)
+
                 st.success("Produto inserido com sucesso!")
                 time.sleep(2)
                 st.rerun()
-            except ValueError as e:
-                st.error(f"Erro de Validação: {e}")
-            except KeyError as erro:
-                st.error(f"Falta o campo {erro} na entrada de dados.")
+
             except Exception as erro:
                 st.error(erro)
     def atualizar():
@@ -95,12 +109,29 @@ class ManterProdutoUI:
        
         idcategoria = opcoes_categorias[categoria_selecionada]
 
+        nova_imagem = st.file_uploader(
+        "Nova imagem (opcional)",
+        type=["png", "jpg", "jpeg"]
+    )
+
         if st.button("Atualizar"):
             try:
-                View.produto_atualizar(id, descricao, preco, estoque, idcategoria)
+                caminho_imagem = op.get_imagem()
+
+                if nova_imagem:
+                    os.makedirs("assets/", exist_ok=True)
+                    nome_arquivo = f"{descricao.replace(' ', '_')}.png"
+                    caminho_imagem = f"assets/{nome_arquivo}"
+
+                    with open(caminho_imagem, "wb") as f:
+                        f.write(nova_imagem.getbuffer())
+
+                View.produto_atualizar(id, descricao, preco, estoque, idcategoria, caminho_imagem)
+
                 st.success("Produto atualizado com sucesso!")
                 time.sleep(2)
                 st.rerun()
+
             except Exception as erro:
                 st.error(erro)
     def excluir():

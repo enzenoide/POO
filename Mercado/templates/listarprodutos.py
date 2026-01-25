@@ -18,7 +18,7 @@ class ListarProdutosUI:
             col = colunas[index%num_colunas]
             with col:
                 with st.container(border = True):
-                    caminho_imagem = produto.get_url_imagem()
+                    caminho_imagem = produto.get_imagem()
 
 
                     if caminho_imagem:
