@@ -232,7 +232,7 @@ class View:
             if mensagem in str(e):
                 raise ValueError("O ID e a Quantidade precisam ser números")
             raise e
-        print("bossetao")
+        
         CarrinhoDAO.inserir_carrinho(idcliente, item)
         
         

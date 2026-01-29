@@ -76,9 +76,8 @@ class ProdutoDAO(DAO):
                     c = Produto.from_json(dic)
                     cls.objetos.append(c)
           
-            print(f"ProdutoDAO: {len(cls.objetos)} produtos carregados com sucesso.")
+           
         except Exception as e:
-            print(f"ProdutoDAO: ERRO AO ABRIR (Lista de objetos vazia). Detalhes: {e}")
             pass
     @classmethod
     def salvar(cls):
