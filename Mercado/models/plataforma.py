@@ -19,7 +19,9 @@ class Plataforma:
             raise ValueError("Nome não pode estar vazio")
     def to_json(self):
         return {"id":self.get_id(),"nome":self.get_nome()}
-
+    @staticmethod
+    def from_json(dic):
+        return Plataforma(dic["id"],dic["nome"])
 class PlataformaDAO(DAO):
     def abrir(cls):
         cls.objetos = []
