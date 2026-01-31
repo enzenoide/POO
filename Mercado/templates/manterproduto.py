@@ -25,6 +25,8 @@ class ManterProdutoUI:
         preco = st.number_input("Me informe o preço do produto: ", value=0.01, min_value=0.01)
         estoque = st.number_input("Me informe a quantidade do produto em estoque: ", value=1.0, min_value=1.0)
         idcategoria = st.text_input("Me informe o ID da categoria: ", value="1")
+        desenvolvedora = st.text_input("Me informe o ID da desenvolvedora: ",value="1")
+        plataforma = st.text_input("Me informe o ID da plataforma: ",value="1")
 
         imagem = st.file_uploader(
             "Imagem do produto",
@@ -45,7 +47,7 @@ class ManterProdutoUI:
                 with open(caminho_imagem, "wb") as f:
                     f.write(imagem.getbuffer())
 
-                View.produto_inserir(descricao, preco, estoque, idcategoria, caminho_imagem)
+                View.produto_inserir(descricao, preco, estoque, idcategoria, caminho_imagem,desenvolvedora,plataforma)
 
                 st.success("Produto inserido com sucesso!")
                 time.sleep(2)
@@ -126,7 +128,7 @@ class ManterProdutoUI:
                     with open(caminho_imagem, "wb") as f:
                         f.write(nova_imagem.getbuffer())
 
-                View.produto_atualizar(id, descricao, preco, estoque, idcategoria, caminho_imagem)
+                View.produto_atualizar(id, descricao, preco, estoque, idcategoria, caminho_imagem,desenvolvedora,plataforma)
 
                 st.success("Produto atualizado com sucesso!")
                 time.sleep(2)
@@ -143,7 +145,7 @@ class ManterProdutoUI:
                 try:
                     id = op.get_id()
                     View.produto_excluir(id)
-                    st.success("Produto excluída com sucesso")
+                    st.success("Produto excluído com sucesso")
                     time.sleep(2)
                     st.rerun()
                 except Exception as erro:
