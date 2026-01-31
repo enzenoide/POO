@@ -1,14 +1,19 @@
 import json
 from models.dao import DAO
 class Produto:
-    def __init__(self, id, descricao, preco, estoque, idcategoria,imagem):
+    def __init__(self, id, descricao, preco, estoque, idcategoria,imagem,plataforma,desenvolvedora):
         self.set_id(id)
         self.set_descricao(descricao)
         self.set_preco(preco)
         self.set_estoque(estoque)
         self.set_idcategoria(idcategoria)
         self.set_imagem(imagem)
-
+        self.set_plataforma(plataforma)
+        self.set_desenvolvedora(desenvolvedora)
+    def get_plataforma(self):
+        return self.__plataforma
+    def get_desenvolvedora(self):
+        return self.__desenvolvedora
     def get_imagem(self):
         return self.__imagem
     def get_id(self):
@@ -22,6 +27,16 @@ class Produto:
     def get_idcategoria(self):
         return self.__idcategoria
 
+    def set_desenvolvedora(self,desenvolvedora):
+        if desenvolvedora == "":
+            raise ValueError("Desenvolvedora não pode estar vazio")
+        else:
+            self.__desenvolvedora = desenvolvedora
+    def set_plataforma(self,plataforma):
+        if plataforma == "":
+            raise ValueError("Plataforma não pode estar vazio")
+        else:
+            self.__plataforma = plataforma
     def set_id(self, id):
         if id is None:
             self.__id = 0 
@@ -59,11 +74,11 @@ class Produto:
         return f"Produto ID: {self.get_id()} | Descrição: {self.get_descricao()} | Preço: R${self.get_preco():.2f} | Estoque: {self.get_estoque()} | Categoria ID: {self.get_idcategoria()}"
     
     def to_json(self):
-        return { "id" : self.get_id(), "descricao" : self.get_descricao(), "preco" : self.get_preco(), "estoque" : self.get_estoque(), "idcategoria" : self.get_idcategoria(), "imagem": self.get_imagem() }
+        return { "id" : self.get_id(), "descricao" : self.get_descricao(), "preco" : self.get_preco(), "estoque" : self.get_estoque(), "idcategoria" : self.get_idcategoria(), "imagem": self.get_imagem(),"desenvolvedora": self.get_desenvolvedora(),"plataforma": self.get_plataforma()}
 
     @staticmethod
     def from_json(dic):
-        return Produto(dic["id"], dic["descricao"], dic["preco"], dic["estoque"], dic["idcategoria"],dic.get("imagem"))
+        return Produto(dic["id"], dic["descricao"], dic["preco"], dic["estoque"], dic["idcategoria"],dic["imagem"],dic["desenvolvedora"],dic["plataforma"])
 
 class ProdutoDAO(DAO):
     @classmethod
@@ -88,7 +103,9 @@ class ProdutoDAO(DAO):
                 "preco": p.get_preco(),
                 "estoque": p.get_estoque(),
                 "idcategoria": p.get_idcategoria(),
-                "imagem": p.get_imagem()
+                "imagem": p.get_imagem(),
+                "desenvolvedora": p.get_desenvolvedora(),
+                "plataforma": p.get_plataforma()
             } for p in cls.objetos], arquivo, indent=4)
 
     @classmethod
