@@ -11,6 +11,8 @@ from templates.carrinho import CarrinhoUI
 from templates.listarcompras import ListarComprasUI
 from templates.listarvendas import ListarvendasUI
 from templates.relatorio import RelatorioVendasUI
+from templates.desenvolvedora import DesenvolvedoraUI
+from templates.plataforma import PlataformaUI
 class IndexUI:
     def menu_visitante():
         op = st.sidebar.selectbox("Menu", [
@@ -24,6 +26,9 @@ class IndexUI:
                                   "Cadastro de Categorias", 
                                    "Cadastro de Clientes",
                                    "Cadastro de Produtos",
+                                   "Cadastro de Desenvolvedora",
+                                   "Cadastro de Plataforma",
+                                   "Avaliações",
                                    "Reajustar Produtos",
                                    "Listar Vendas",
                                    "Relatório de Vendas"])
@@ -31,6 +36,8 @@ class IndexUI:
         if op == "Cadastro de Categorias": ManterCategoriaUI.main()
         if op == "Cadastro de Clientes": ManterClienteUI.main()
         if op == "Cadastro de Produtos": ManterProdutoUI.main()
+        if op == "Cadastro de Desenvolvedora": DesenvolvedoraUI.main()
+        if op == "Cadastro de Plataforma": PlataformaUI.main()
         if op == "Reajustar Produtos": ReajustarProdutoUI.main()
         if op == "Listar Vendas": ListarvendasUI.main()
         if op == "Relatório de Vendas": RelatorioVendasUI.main()

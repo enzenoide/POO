@@ -4,6 +4,10 @@ from models.produto import Produto,ProdutoDAO
 from models.carrinho import Carrinho,CarrinhoDAO
 from models.venda import Venda,VendaDAO
 from models.vendaItem import VendaItem,VendaitemDAO
+from models.avaliacao import Avaliacao, AvaliacaoDAO
+from models.cupomdesconto import CupomDesconto,CupomDescontoDAO
+from models.desenvolvedora import Desenvolvedora,DesenvolvedoraDAO
+from models.plataforma import Plataforma,PlataformaDAO
 from datetime import datetime
 import json
 
@@ -168,7 +172,7 @@ class View:
         c = Categoria(id,desc)
         CategoriaDAO.excluir(c)
 
-    def produto_inserir(desc, preco, estoque, idcategoria,imagem):
+    def produto_inserir(desc, preco, estoque, idcategoria,imagem,desenvolvedora,plataforma):
         if not idcategoria or str(idcategoria).strip() == "":
             raise ValueError("O ID da categoria não pode ser vazio.")
     
@@ -181,7 +185,7 @@ class View:
         if idcategoria_str not in ids_validos:
             raise ValueError("ID da Categoria inexistente. Por favor, insira um ID válido.")
 
-        c = Produto(None, desc, preco, estoque, idcategoria_str,imagem)
+        c = Produto(None, desc, preco, estoque, idcategoria_str,imagem,desenvolvedora,plataforma)
         ProdutoDAO.inserir(c)
 
     def produto_listar():
@@ -190,8 +194,8 @@ class View:
     def produto_listar_id(id):
         return ProdutoDAO.listar_id(id)
 
-    def produto_atualizar(id, desc, preco, estoque, idcategoria,imagem):
-        c = Produto(id, desc, preco, estoque, idcategoria,imagem)
+    def produto_atualizar(id, desc, preco, estoque, idcategoria,imagem,desenvolvedora,plataforma):
+        c = Produto(id, desc, preco, estoque, idcategoria,imagem,desenvolvedora,plataforma)
         ProdutoDAO.atualizar(c)
 
     def produto_excluir(id):
@@ -385,3 +389,25 @@ class View:
             'qtd_vendida': qtd_vendida,
             'estoque_valor_venda': total_estoque_valor_venda,
         }
+    
+    def desenvolvedora_inserir(nome):
+        d = Desenvolvedora(None,nome)
+        DesenvolvedoraDAO.inserir(d)
+    def desenvolvedora_listar():
+        return DesenvolvedoraDAO.listar()
+    def desenvolvedora_listar_id(id):
+        return DesenvolvedoraDAO.listar_id()
+    def desenvolvedora_excluir(id):
+        d = Desenvolvedora(id,".")
+        DesenvolvedoraDAO.excluir(d)
+    
+    def plataforma_inserir(nome):
+        p = Plataforma(None,nome)
+        PlataformaDAO.inserir(p)
+    def plataforma_listar():
+        return PlataformaDAO.listar()
+    def plataforma_listar_id(id):
+        return PlataformaDAO.listar_id()
+    def plataforma_excluir(id):
+        d = Plataforma(id,".")
+        PlataformaDAO.excluir(d)
