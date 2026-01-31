@@ -10,19 +10,22 @@ class Plataforma:
         return self.__nome
     
     def set_id(self,id):
-        if id < 0:
-            raise ValueError("Não existe ID negativo")
-        else:
-            self.__id = id
+        if id is None:
+            self.__id = 0 
+            return
+        self.__id = int(id)
     def set_nome(self,nome):
         if nome == "":
             raise ValueError("Nome não pode estar vazio")
+        else:
+            self.__nome = nome
     def to_json(self):
         return {"id":self.get_id(),"nome":self.get_nome()}
     @staticmethod
     def from_json(dic):
         return Plataforma(dic["id"],dic["nome"])
 class PlataformaDAO(DAO):
+    @classmethod
     def abrir(cls):
         cls.objetos = []
         try:
