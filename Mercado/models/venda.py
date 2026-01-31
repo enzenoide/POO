@@ -6,12 +6,13 @@ from .produto import ProdutoDAO
 from models.dao import DAO
 from models.cliente import ClienteDAO
 class Venda:
-    def __init__(self, id, data, carrinho, total, idcliente):
+    def __init__(self, id, data, carrinho, total, idcliente,cupomdesconto):
         self.set_id(id)
         self.set_data(data)
         self.carrinho = carrinho
         self.set_total(total)
         self.set_idcliente(idcliente)
+        self.set_cupomdesconto(cupomdesconto)
 
     def get_id(self):
         return self.__id
@@ -21,7 +22,14 @@ class Venda:
         return self.__total
     def get_idcliente(self):
         return self.__idcliente
+    def get_cupomdesconto(self):
+        return self.__cupomdesconto
 
+    def set_cupomdesconto(self,cupomdesconto):
+        if cupomdesconto == "":
+            raise ValueError("Cupom não pode estar vazio")
+        else:
+            self.__cupomdesconto = cupomdesconto
     def set_id(self, id):
         self.__id = int(id)
     def set_data(self, data):
@@ -39,11 +47,11 @@ class Venda:
         return f"Venda ID: {self.get_id()}, Data: {self.get_data()}, Total: R${self.get_total():.2f}, Cliente: {self.get_idcliente()}"
     
     def to_json(self):
-        return { "id" : self.get_id(), "data" : self.get_data(), "carrinho" : self.carrinho, "total" : self.get_total(), "idcliente" : self.get_idcliente() }
+        return { "id" : self.get_id(), "data" : self.get_data(), "carrinho" : self.carrinho, "total" : self.get_total(), "idcliente" : self.get_idcliente(),"cupomdesconto": self.get_cupomdesconto() }
 
     @staticmethod
     def from_json(dic):
-        return Venda(dic["id"], dic["data"], dic["carrinho"], dic["total"], dic["idcliente"])
+        return Venda(dic["id"], dic["data"], dic["carrinho"], dic["total"], dic["idcliente"],dic["cupomdesconto"])
 
 class VendaDAO(DAO):
     @classmethod
