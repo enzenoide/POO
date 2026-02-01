@@ -59,16 +59,22 @@ class VendaDAO(DAO):
         cls.objetos = []
         try:
             with open("json/vendas.json", "r") as arquivo:
-                list_dic = json.load(arquivo)
-                for dic in list_dic:
-                    carrinho_objs = [Carrinho(i["idproduto"], i["qtd"]) for i in dic.get("carrinho", [])]
-                    c = Venda(dic["id"], dic["data"], carrinho_objs, dic["total"], dic["idcliente"])
+                for dic in json.load(arquivo):
+                    carrinho_objs = [
+                        Carrinho(i["idproduto"], i["qtd"])
+                        for i in dic.get("carrinho", [])
+                    ]
 
-                   
-                    if "nome_cliente" in dic:
-                        c.nome_cliente = dic["nome_cliente"]
+                    venda = Venda(
+                        dic["id"],
+                        dic["data"],
+                        carrinho_objs,
+                        dic["total"],
+                        dic["idcliente"],
+                        dic.get("cupomdesconto")  
+                    )
 
-                    cls.objetos.append(c)
+                    cls.objetos.append(venda)
         except:
             pass
 
@@ -77,25 +83,17 @@ class VendaDAO(DAO):
         dados = []
 
         for v in cls.objetos:
-            
             cliente = ClienteDAO.listar_id(v.get_idcliente())
             nome_cliente = cliente.get_nome() if cliente else "Cliente não encontrado"
 
             itens_carrinho = []
             for item in v.carrinho:
-                
                 produto = ProdutoDAO.listar_id(item.get_idproduto())
-                descricao_produto = produto.get_descricao() if produto else "Produto não encontrado"
-
-                
-               
-                preco_venda = produto.get_preco() if produto else 0.0 
-
                 itens_carrinho.append({
                     "idproduto": item.get_idproduto(),
-                    "descricao_produto": descricao_produto,
+                    "descricao_produto": produto.get_descricao() if produto else "Produto não encontrado",
                     "qtd": item.get_qtd(),
-                    "preco": preco_venda  
+                    "preco": produto.get_preco() if produto else 0.0
                 })
 
             dados.append({
@@ -104,12 +102,13 @@ class VendaDAO(DAO):
                 "carrinho": itens_carrinho,
                 "total": v.get_total(),
                 "idcliente": v.get_idcliente(),
+                "cupomdesconto": v.get_cupomdesconto(),  # 🔥 AGORA SALVA
                 "nome_cliente": nome_cliente
             })
 
         with open("json/vendas.json", "w") as arquivo:
             json.dump(dados, arquivo, indent=4)
-            
+                
     @classmethod
     def listar_por_cliente(cls, idcliente):
         """Lista todas as vendas de um cliente específico."""
