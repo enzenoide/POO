@@ -50,20 +50,12 @@ class ListarvendasUI:
                     total_item = quantidade * preco_unitario
                     
                     
-                    url_imagem = item.get("url_imagem", "assets/placeholder.png")
+                    
                     
                     with col:
                         with st.container(border=True):
                             
-                            img_col1, img_col2, img_col3 = st.columns([1, 4, 1])
-                            with img_col2:
-                                try:
-                                    st.image(url_imagem, width=150)
-                                except:
-                                    st.warning("(Imagem não carregada)")
-
                             st.markdown("---") 
-
                             st.markdown(f"**{descricao}**")
                             st.markdown(f"R$ {preco_unitario:.2f} (un.)")
                             st.markdown(f"**Qtd vendida:** {quantidade}")
