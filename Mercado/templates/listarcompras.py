@@ -5,68 +5,65 @@ from view import View
 class ListarComprasUI:
     def main():
         st.header("🛒 Histórico de Compras")
-        
+
         id_cliente = st.session_state["cliente_id"]
-        # View.cliente_listar_compras retorna uma lista de dicionários de Vendas
-        compras = View.cliente_listar_compras(id_cliente) 
-        
+        compras = View.cliente_listar_compras(id_cliente)
+
         if not compras:
-            st.info("Nenhuma compra registrada para este cliente.")
+            st.info("Nenhuma compra registrada.")
             return
 
-        # Itera sobre cada VENDA (Compra)
-        # Usamos reversed para mostrar as compras mais recentes primeiro
-        for venda in reversed(compras): 
-            
-            # Formata os dados da Venda
+        for venda in reversed(compras):
+
             venda_id = venda['id']
-            total_venda = venda['total']
-            
-           
-            data_venda = venda["data"].split('T')[0] if isinstance(venda["data"], str) else str(venda["data"]).split(' ')[0]
-            
-            # Expander para agrupar os itens da compra
-            with st.expander(f"💰 Venda ID: **{venda_id}** | Total: R$ **{total_venda:.2f}** | Data: {data_venda}"):
-                
-                itens_na_compra = venda.get("carrinho", []) 
-                
-                if not itens_na_compra:
-                    st.warning("Nenhum item detalhado encontrado nesta venda.")
-                    continue
-                
-                st.markdown("---") 
-                
-                # Itera sobre os ITENS DENTRO desta Venda (layout com colunas)
-                num_colunas = 3
-                colunas = st.columns(num_colunas)
-                
-                for index, item in enumerate(itens_na_compra):
-                    col = colunas[index % num_colunas]
-                    
-                    descricao = item.get("descricao_produto", "Produto não encontrado")
-                    quantidade = item.get("qtd", 0)
-                    preco_unitario = item.get("preco", 0.0)
-                    total_item = quantidade * preco_unitario
-                    
-                    
-                    url_imagem = item.get("url_imagem", "assets/placeholder.png")
-                    
-                    with col:
+            total = venda['total']
+            data_venda = venda['data']
+
+            with st.expander(
+                f"💰 Venda #{venda_id} | Total: R$ {total:.2f} | Data: {data_venda}"
+            ):
+
+                # ================= ITENS =================
+                colunas = st.columns(3)
+                for i, item in enumerate(venda["carrinho"]):
+                    with colunas[i % 3]:
                         with st.container(border=True):
-                            
-                            img_col1, img_col2, img_col3 = st.columns([1, 4, 1])
-                            with img_col2:
-                                try:
-                                    st.image(url_imagem, width=150)
-                                except:
-                                    st.warning("(Imagem não carregada)")
-
-                            st.markdown("---") 
-
-                            st.markdown(f"**{descricao}**")
-                            st.markdown(f"R$ {preco_unitario:.2f} (un.)")
-                            st.markdown(f"**Qtd Comprada:** {quantidade}")
-                            st.markdown(f"**Subtotal:** R$ {total_item:.2f}")
+                            st.image(item["url_imagem"], width=140)
+                            st.markdown(f"**{item['descricao_produto']}**")
+                            st.markdown(f"Qtd: {item['qtd']}")
+                            st.markdown(f"Preço: R$ {item['preco']:.2f}")
 
                 st.markdown("---")
-          
+
+                # ================= AVALIAÇÃO =================
+                avaliacao = View.avaliacao_buscar_por_venda(venda_id)
+
+                if avaliacao:
+                    st.success("✅ Compra avaliada")
+                    st.markdown(f"📝 *{avaliacao.get_texto()}*")
+                else:
+                    deseja = st.checkbox(
+                        "Deseja avaliar esta compra?",
+                        key=f"avaliar_{venda_id}"
+                    )
+
+                    if deseja:
+                        texto = st.text_area(
+                            "Escreva sua avaliação:",
+                            key=f"texto_{venda_id}"
+                        )
+
+                        if st.button(
+                            "Enviar avaliação",
+                            key=f"btn_{venda_id}"
+                        ):
+                            try:
+                                View.avaliacao_inserir(
+                                    venda_id,
+                                    id_cliente,
+                                    texto
+                                )
+                                st.success("Avaliação enviada!")
+                                st.rerun()
+                            except Exception as e:
+                                st.error(e)
