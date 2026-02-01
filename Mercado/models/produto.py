@@ -58,10 +58,7 @@ class Produto:
         if estoque is None or str(estoque).strip() == "":
              raise ValueError("O estoque precisa ser informado.")
              
-        estoque = float(estoque)
-        if estoque < 0: 
-            raise ValueError("O estoque não pode ser negativo")
-        self.__estoque = estoque
+        self.__estoque = float(estoque)
         
     def set_idcategoria(self, idcategoria):
         if idcategoria is None or str(idcategoria).strip() == "":
@@ -74,11 +71,11 @@ class Produto:
         return f"Produto ID: {self.get_id()} | Descrição: {self.get_descricao()} | Preço: R${self.get_preco():.2f} | Estoque: {self.get_estoque()} | Categoria ID: {self.get_idcategoria()}"
     
     def to_json(self):
-        return { "id" : self.get_id(), "descricao" : self.get_descricao(), "preco" : self.get_preco(), "estoque" : self.get_estoque(), "idcategoria" : self.get_idcategoria(), "imagem": self.get_imagem(),"desenvolvedora": self.get_desenvolvedora(),"plataforma": self.get_plataforma()}
+        return { "id" : self.get_id(), "descricao" : self.get_descricao(), "preco" : self.get_preco(), "estoque" : self.get_estoque(), "idcategoria" : self.get_idcategoria(), "imagem": self.get_imagem(),"plataforma": self.get_plataforma(),"desenvolvedora": self.get_desenvolvedora()}
 
     @staticmethod
     def from_json(dic):
-        return Produto(dic["id"], dic["descricao"], dic["preco"], dic["estoque"], dic["idcategoria"],dic["imagem"],dic["desenvolvedora"],dic["plataforma"])
+        return Produto(dic["id"], dic["descricao"], dic["preco"], dic["estoque"], dic["idcategoria"],dic["imagem"],dic["plataforma"],dic["desenvolvedora"])
 
 class ProdutoDAO(DAO):
     @classmethod
@@ -104,8 +101,8 @@ class ProdutoDAO(DAO):
                 "estoque": p.get_estoque(),
                 "idcategoria": p.get_idcategoria(),
                 "imagem": p.get_imagem(),
-                "desenvolvedora": p.get_desenvolvedora(),
-                "plataforma": p.get_plataforma()
+                "plataforma": p.get_plataforma(),
+                "desenvolvedora": p.get_desenvolvedora()
             } for p in cls.objetos], arquivo, indent=4)
 
     @classmethod
