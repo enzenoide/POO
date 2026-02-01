@@ -124,29 +124,88 @@ class CarrinhoUI:
 
         
     def comprar():
-        st.header("Comprar Carrinho")
-        carrinho_detalhado = View.carrinho_listar_detalhado(st.session_state["cliente_id"])
+        st.header("🛒 Finalizar Compra")
 
-        if not carrinho_detalhado:
+        carrinho = View.carrinho_listar_detalhado(st.session_state["cliente_id"])
+
+        if not carrinho:
             st.write("Nenhum produto no carrinho.")
             return
-        
-        
-        df = pd.DataFrame(carrinho_detalhado)
-        st.dataframe(df, 
-                    hide_index=True, 
-                    column_order=["id_produto", "descricao", "preco", "quantidade", "total"])
 
-        total_geral = df['total'].sum()
+        # ===== LISTAGEM DOS PRODUTOS =====
+        colunas = st.columns(2)
+        total_geral = 0.0
+
+        for index, item in enumerate(carrinho):
+            with colunas[index % 2]:
+                with st.container(border=True):
+
+                    if item.get("imagem"):
+                        st.image(item["imagem"], width=180)
+
+                    st.markdown(f"### {item['descricao']}")
+                    st.markdown(f"**Preço:** R$ {item['preco']:.2f}")
+                    st.markdown(f"**Quantidade:** {item['quantidade']}")
+
+                    subtotal = item["preco"] * item["quantidade"]
+                    total_geral += subtotal
+
+                    st.markdown(f"**Subtotal:** R$ {subtotal:.2f}")
 
         st.markdown("---")
-        st.success(f"## Total a Pagar: R$ {total_geral:.2f}")
 
+        # ===== CUPOM =====
+        if "cupom_aplicado" not in st.session_state:
+            st.session_state.cupom_aplicado = None
+
+        usar_cupom = st.selectbox(
+            "Deseja usar cupom de desconto?",
+            ["Não", "Sim"]
+        )
+
+        desconto = 0.0
+
+        if usar_cupom == "Sim":
+            codigo = st.text_input("Digite o código do cupom")
+
+            if st.button("Aplicar cupom"):
+                cupom = View.cupomdesconto_buscar_por_nome(codigo)
+
+                if cupom:
+                    st.session_state.cupom_aplicado = cupom
+                    st.success(f"Cupom {cupom.get_codigo()} aplicado ({cupom.get_porcentagem()}%)")
+                else:
+                    st.session_state.cupom_aplicado = None
+                    st.error("Cupom inválido.")
+
+        # ===== CALCULO =====
+        if st.session_state.cupom_aplicado:
+            desconto = total_geral * (st.session_state.cupom_aplicado.get_porcentagem() / 100)
+
+        total_final = total_geral - desconto
+
+        # ===== RESUMO =====
+        st.markdown("---")
+        st.markdown(f"### 💰 Total bruto: R$ {total_geral:.2f}")
+
+        if desconto > 0:
+            st.markdown(f"### 🔻 Desconto: -R$ {desconto:.2f}")
+
+        st.success(f"## Total a pagar: R$ {total_final:.2f}")
+
+        # ===== CONFIRMAR =====
         if st.button("✅ Confirmar Compra e Pagar"):
             try:
-                View.carrinho_comprar(st.session_state["cliente_id"])
-                st.success("Carrinho comprado com sucesso!")
+                View.carrinho_comprar(
+                    st.session_state["cliente_id"],
+                    st.session_state.cupom_aplicado.get_codigo()
+                    if st.session_state.cupom_aplicado else None
+                )
+
+                st.success("Compra realizada com sucesso!")
+                st.session_state.cupom_aplicado = None
                 time.sleep(2)
                 st.rerun()
-            except Exception as error:
-                st.error(error)
+
+            except Exception as e:
+                st.error(e)
