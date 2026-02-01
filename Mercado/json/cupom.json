@@ -1,0 +1,12 @@
+[
+    {
+        "id": 1,
+        "codigo": "GILBERT",
+        "porcentagem": 50
+    },
+    {
+        "id": 2,
+        "codigo": "JORGIANO",
+        "porcentagem": 32
+    }
+]

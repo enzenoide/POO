@@ -159,8 +159,8 @@ class View:
     def categoria_listar():
         return CategoriaDAO.listar()
 
-    def categoria_listar_id():
-        return CategoriaDAO.listar_id()
+    def categoria_listar_id(id):
+        return CategoriaDAO.listar_id(id)
 
     def categoria_atualizar(id,desc):
         if id == "": raise ValueError("ID não pode estar vazio")
@@ -172,7 +172,7 @@ class View:
         c = Categoria(id,desc)
         CategoriaDAO.excluir(c)
 
-    def produto_inserir(desc, preco, estoque, idcategoria,imagem,desenvolvedora,plataforma):
+    def produto_inserir(desc, preco, estoque, idcategoria,imagem,plataforma,desenvolvedora):
         if not idcategoria or str(idcategoria).strip() == "":
             raise ValueError("O ID da categoria não pode ser vazio.")
     
@@ -185,7 +185,7 @@ class View:
         if idcategoria_str not in ids_validos:
             raise ValueError("ID da Categoria inexistente. Por favor, insira um ID válido.")
 
-        c = Produto(None, desc, preco, estoque, idcategoria_str,imagem,desenvolvedora,plataforma)
+        c = Produto(None, desc, preco, estoque, idcategoria_str,imagem,plataforma,desenvolvedora)
         ProdutoDAO.inserir(c)
 
     def produto_listar():
@@ -194,8 +194,8 @@ class View:
     def produto_listar_id(id):
         return ProdutoDAO.listar_id(id)
 
-    def produto_atualizar(id, desc, preco, estoque, idcategoria,imagem,desenvolvedora,plataforma):
-        c = Produto(id, desc, preco, estoque, idcategoria,imagem,desenvolvedora,plataforma)
+    def produto_atualizar(id, desc, preco, estoque, idcategoria,imagem,plataforma,desenvolvedora):
+        c = Produto(id, desc, preco, estoque, idcategoria,imagem,plataforma,desenvolvedora)
         ProdutoDAO.atualizar(c)
 
     def produto_excluir(id):
@@ -254,39 +254,43 @@ class View:
         return total_geral
 
     @staticmethod
-    def carrinho_comprar(idcliente):
+    def carrinho_comprar(idcliente, codigo_cupom=None):
         from models.carrinho import CarrinhoDAO
         from models.venda import Venda, VendaDAO
         from models.vendaItem import VendaItem, VendaitemDAO
         from models.produto import ProdutoDAO
+        from models.cupomdesconto import CupomDescontoDAO
         from datetime import datetime
 
-        # 1️⃣ Abre o carrinho REAL (objetos)
+        # ===============================
+        # 1️⃣ Abrir carrinho do cliente
+        # ===============================
         CarrinhoDAO.abrir(idcliente)
         itens_carrinho = CarrinhoDAO.objetos
 
         if not itens_carrinho:
-            print("Carrinho vazio! Nada para comprar.")
-            return False
+            raise ValueError("Carrinho vazio.")
 
-        total_compra = 0
+        # ===============================
+        # 2️⃣ Calcular total bruto
+        # ===============================
+        total_bruto = 0.0
         itens_para_venda = []
 
-        # 2️⃣ Validação + cálculo
         for item in itens_carrinho:
             produto = ProdutoDAO.listar_id(item.get_idproduto())
 
-            if produto is None:
-                print("Produto não encontrado.")
-                return False
+            if not produto:
+                raise ValueError("Produto não encontrado.")
 
             if produto.get_estoque() < item.get_qtd():
-                print("Estoque insuficiente.")
-                return False
+                raise ValueError(
+                    f"Estoque insuficiente para {produto.get_descricao()}"
+                )
 
             preco_unitario = float(produto.get_preco())
             subtotal = preco_unitario * item.get_qtd()
-            total_compra += subtotal
+            total_bruto += subtotal
 
             itens_para_venda.append({
                 "produto": produto,
@@ -294,27 +298,45 @@ class View:
                 "preco": preco_unitario
             })
 
-        if not itens_para_venda:
-            print("Nenhum item válido para compra.")
-            return False
+        # ===============================
+        # 3️⃣ Aplicar cupom (se existir)
+        # ===============================
+        desconto = 0.0
+        cupom_obj = None
 
-        # 3️⃣ Cria a venda
+        if codigo_cupom:
+            CupomDescontoDAO.abrir()
+            cupom_obj = CupomDescontoDAO.listar_por_codigo(codigo_cupom)
+
+            if not cupom_obj:
+                raise ValueError("Cupom inválido.")
+
+            desconto = total_bruto * (cupom_obj.get_porcentagem() / 100)
+
+        # Garante que o total nunca fique negativo
+        total_pago = max(total_bruto - desconto, 0)
+
+        # ===============================
+        # 4️⃣ Criar venda
+        # ===============================
         venda = Venda(
             id=0,
             data=datetime.now(),
-            carrinho = itens_carrinho,
-            total=total_compra,
-            idcliente=idcliente
+            carrinho=itens_carrinho,
+            total=total_pago,
+            idcliente=idcliente,
+            cupomdesconto=cupom_obj.get_codigo() if cupom_obj else None
         )
 
         VendaDAO.inserir(venda)
-        id_venda_gerado = venda.get_id()
+        id_venda = venda.get_id()
 
-        if not id_venda_gerado:
-            print("ERRO CRÍTICO: Falha ao obter o ID da Venda.")
-            return False
+        if not id_venda:
+            raise RuntimeError("Erro ao gerar venda.")
 
-        # 4️⃣ Cria os itens da venda + atualiza estoque
+        # ===============================
+        # 5️⃣ Criar itens da venda
+        # ===============================
         for item in itens_para_venda:
             produto = item["produto"]
 
@@ -322,19 +344,23 @@ class View:
                 id=None,
                 qtd=item["qtd"],
                 preco=item["preco"],
-                idvenda=id_venda_gerado,
+                idvenda=id_venda,
                 idproduto=produto.get_id()
             )
             VendaitemDAO.inserir(vendaitem)
 
+            # Atualiza estoque
             produto.set_estoque(produto.get_estoque() - item["qtd"])
             ProdutoDAO.atualizar(produto)
 
-        # 5️⃣ Limpa o carrinho
+        # ===============================
+        # 6️⃣ Limpar carrinho
+        # ===============================
         CarrinhoDAO.limpar(idcliente)
 
-        print(f"Compra finalizada com sucesso. Venda ID: {id_venda_gerado}")
         return True
+
+
     @classmethod
     def relatorio_consumo(cls):
         #
@@ -396,7 +422,7 @@ class View:
     def desenvolvedora_listar():
         return DesenvolvedoraDAO.listar()
     def desenvolvedora_listar_id(id):
-        return DesenvolvedoraDAO.listar_id()
+        return DesenvolvedoraDAO.listar_id(id)
     def desenvolvedora_excluir(id):
         d = Desenvolvedora(id,".")
         DesenvolvedoraDAO.excluir(d)
@@ -407,7 +433,86 @@ class View:
     def plataforma_listar():
         return PlataformaDAO.listar()
     def plataforma_listar_id(id):
-        return PlataformaDAO.listar_id()
+        return PlataformaDAO.listar_id(id)
     def plataforma_excluir(id):
         d = Plataforma(id,".")
         PlataformaDAO.excluir(d)
+
+    def cupomdesconto_inserir(codigo,porcentagem):
+        c = CupomDesconto(None,codigo, porcentagem)
+        CupomDescontoDAO.inserir(c)
+    def cupomdesconto_listar():
+        return CupomDescontoDAO.listar()
+    def cupomdesconto_listar_id(id):
+        return CupomDescontoDAO.listar_id(id)
+    def cupomdesconto_listar_codigo(codigo):
+        return CupomDescontoDAO.listar_por_codigo(codigo)
+    def cupomdesconto_excluir(id):
+        c = CupomDesconto(id,".",1)
+        CupomDescontoDAO.excluir(c)
+    def cupomdesconto_buscar_por_nome(nome):
+        nome = nome.strip().lower()
+
+        cupons = CupomDescontoDAO.listar()
+        for cupom in cupons:
+            if cupom.get_codigo().strip().lower() == nome:
+                return cupom
+
+        return None
+    
+
+    def avaliacao_existe(idvenda):
+        return AvaliacaoDAO.buscar_por_venda(idvenda)
+
+    def avaliacao_inserir(idvenda, idcliente, texto):
+        if View.avaliacao_existe(idvenda):
+            raise ValueError("Essa compra já foi avaliada.")
+
+        a = Avaliacao(None, idvenda, idcliente, texto)
+        AvaliacaoDAO.inserir(a)
+
+    def avaliacao_buscar_por_venda(idvenda):
+        return AvaliacaoDAO.buscar_por_venda(idvenda)
+
+    @staticmethod
+    def avaliacao_listar():
+        from models.avaliacao import AvaliacaoDAO
+        from models.venda import VendaDAO
+        from models.cliente import ClienteDAO
+
+        avaliacoes = AvaliacaoDAO.listar()
+        vendas = VendaDAO.listar()
+
+        # Indexa vendas por ID (performance + clareza)
+        vendas_por_id = {v.get_id(): v for v in vendas}
+
+        lista_formatada = []
+
+        for a in avaliacoes:
+            venda = vendas_por_id.get(a.get_idvenda())
+            if not venda:
+                continue
+
+            cliente = ClienteDAO.listar_id(a.get_idcliente())
+            nome_cliente = cliente.get_nome() if cliente else "Cliente não encontrado"
+
+            lista_formatada.append({
+                "id": a.get_id(),
+                "comentario": a.get_texto(),
+                "data": a.get_data(),
+                "cliente": nome_cliente,
+                "venda": {
+                    "id": venda.get_id(),
+                    "itens": venda.carrinho 
+                }
+            })
+
+        return lista_formatada
+
+    def avaliacao_excluir(id_avaliacao):
+        AvaliacaoDAO.abrir()
+        for a in AvaliacaoDAO.listar():
+            if a.get_id() == id_avaliacao:
+                AvaliacaoDAO.excluir(a)
+                return
+        raise ValueError("Avaliação não encontrada.")

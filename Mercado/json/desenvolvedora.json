@@ -14,5 +14,13 @@
     {
         "id": 5,
         "nome": "Ubisoft"
+    },
+    {
+        "id": 6,
+        "nome": "Rockstar"
+    },
+    {
+        "id": 7,
+        "nome": "FromSoftware"
     }
 ]

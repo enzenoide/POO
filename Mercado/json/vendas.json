@@ -1,32 +1,24 @@
 [
     {
         "id": 1,
-        "data": "2026-01-25T15:17:12.576559",
+        "data": "2026-02-01T20:34:27.310671",
         "carrinho": [
             {
-                "idproduto": 2,
-                "descricao_produto": "Minecraft",
+                "idproduto": 3,
+                "descricao_produto": "Luigi's Mansion",
                 "qtd": 1,
-                "preco": 32.0
-            }
-        ],
-        "total": 32.0,
-        "idcliente": 2,
-        "nome_cliente": "Henze"
-    },
-    {
-        "id": 2,
-        "data": "2026-01-25T15:17:35.748329",
-        "carrinho": [
+                "preco": 150.0
+            },
             {
-                "idproduto": 2,
-                "descricao_produto": "Minecraft",
-                "qtd": 2,
-                "preco": 32.0
+                "idproduto": 6,
+                "descricao_produto": "Dark Souls 3",
+                "qtd": 6,
+                "preco": 200.0
             }
         ],
-        "total": 64.0,
-        "idcliente": 2,
-        "nome_cliente": "Henze"
+        "total": 675.0,
+        "idcliente": 7,
+        "cupomdesconto": "GILBERT",
+        "nome_cliente": "henzola"
     }
 ]

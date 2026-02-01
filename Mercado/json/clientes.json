@@ -40,5 +40,12 @@
         "email": "arthur@gmail.com",
         "fone": "84991012816",
         "senha": "12345678"
+    },
+    {
+        "id": 7,
+        "nome": "henzola",
+        "email": "henzola@gmail.com",
+        "fone": "84991013434",
+        "senha": "12345678"
     }
 ]

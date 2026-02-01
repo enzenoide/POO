@@ -1,34 +1,62 @@
 [
     {
-        "id": 3,
-        "descricao": "Luigis mansion",
-        "preco": 22.0,
-        "estoque": 55.0,
+        "id": 5,
+        "descricao": "Fable",
+        "preco": 50.0,
+        "estoque": 8.0,
         "idcategoria": 4,
-        "imagem": "assets/Luigis_mansion.png"
-    },
-    {
-        "id": 4,
-        "descricao": "GTA 5",
-        "preco": 109.0,
-        "estoque": 10.0,
-        "idcategoria": 5,
-        "imagem": "assets/GTA_5.png"
+        "imagem": "assets/Fable.png",
+        "plataforma": 1,
+        "desenvolvedora": 4
     },
     {
         "id": 1,
         "descricao": "The Witcher 3",
-        "preco": 20.0,
-        "estoque": 28.0,
+        "preco": 50.0,
+        "estoque": 167.0,
         "idcategoria": 2,
-        "imagem": "assets/The_Witcher_3.png"
+        "imagem": "assets/The_Witcher_3.png",
+        "plataforma": "2",
+        "desenvolvedora": "1"
     },
     {
         "id": 2,
         "descricao": "Minecraft",
-        "preco": 32.0,
-        "estoque": 17.0,
+        "preco": 110.0,
+        "estoque": 199.0,
+        "idcategoria": 5,
+        "imagem": "assets/Minecraft.png",
+        "plataforma": 2,
+        "desenvolvedora": 4
+    },
+    {
+        "id": 4,
+        "descricao": "GTA V",
+        "preco": 200.0,
+        "estoque": 46.0,
+        "idcategoria": 4,
+        "imagem": "assets/GTA_V.png",
+        "plataforma": 2,
+        "desenvolvedora": 4
+    },
+    {
+        "id": 3,
+        "descricao": "Luigi's Mansion",
+        "preco": 150.0,
+        "estoque": 10.0,
         "idcategoria": 3,
-        "imagem": "assets/Minecraft.png"
+        "imagem": "assets/Luigi's_Mansion.png",
+        "plataforma": 4,
+        "desenvolvedora": 3
+    },
+    {
+        "id": 6,
+        "descricao": "Dark Souls 3",
+        "preco": 200.0,
+        "estoque": 7.0,
+        "idcategoria": 2,
+        "imagem": "assets/Dark_Souls_3.png",
+        "plataforma": 2,
+        "desenvolvedora": 7
     }
 ]
