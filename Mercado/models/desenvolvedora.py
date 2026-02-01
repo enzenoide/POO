@@ -23,6 +23,8 @@ class Desenvolvedora:
     @staticmethod
     def from_json(dic):
         return Desenvolvedora(dic["id"],dic["nome"])
+    def __str__(self):
+        return f"ID:{self.get_id()} Nome: {self.get_nome()}"
 class DesenvolvedoraDAO(DAO):
     @classmethod
     def abrir(cls):
